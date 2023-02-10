@@ -3,7 +3,9 @@ const { QueryTypes } = require('sequelize');
 
 const getAllItem = async (req, res) => {
     const { name } = req.query;
-    const { id_type } = req.body
+    const { id_type, typesort} = req.body
+    const perPage = 12;
+    const page = req.params.page || 1;
     try {
         if(name){
             if(id_type){

@@ -16,8 +16,14 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       id_customer: {
+        allowNull: false,
         type: Sequelize.INTEGER,
         references: { model: "Customers", key: "id_customer" },
+      },
+      id_payment: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: { model: "Payments", key: "id_payment" },
       },
       datetime: {
         allowNull: false,

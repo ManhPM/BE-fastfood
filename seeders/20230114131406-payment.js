@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up (queryInterface, Sequelize) {
     /**
      * Add seed commands here.
      *
@@ -10,29 +10,26 @@ module.exports = {
      *   name: 'John Doe',
      *   isBetaMember: false
      * }], {});
-     */
-    return queryInterface.bulkInsert("Orders", [
+    */
+    return queryInterface.bulkInsert("Payments", [
       {
-        id_order: 1,
-        id_payment: 2,
-        id_customer: 2,
-        datetime: "2023-01-01 08:30:00",
+        name: "Ví điện tử",
       },
       {
-        id_order: 2,
-        id_payment: 1,
-        id_customer: 1,
-        datetime: "2023-01-15 21:30:00",
+        name: "Thẻ ghi nợ",
+      },
+      {
+        name: "Thanh toán khi nhận hàng",
       },
     ]);
   },
 
-  async down(queryInterface, Sequelize) {
+  async down (queryInterface, Sequelize) {
     /**
      * Add commands to revert seed here.
      *
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
      */
-  },
+  }
 };

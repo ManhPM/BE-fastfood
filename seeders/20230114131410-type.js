@@ -13,12 +13,27 @@ module.exports = {
      */
     return queryInterface.bulkInsert("Types", [
       {
-        name: "Thức ăn",
+        id_type: 1,
+        name: "Burgers",
       },
       {
-        name: "Thức uống",
+        id_type: 2,
+        name: "Đồ uống",
       },
       {
+        id_type: 3,
+        name: "Đồ ngọt",
+      },
+      {
+        id_type: 4,
+        name: "Pasta",
+      },
+      {
+        id_type: 5,
+        name: "Pizza",
+      },
+      {
+        id_type: 6,
         name: "Khác",
       },
     ]);

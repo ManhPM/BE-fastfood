@@ -40,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
       image: {
         allowNull: true,
         type: DataTypes.STRING,
-        defaultValue: "Chua co",
+        defaultValue: "https://demo2.pavothemes.com/poco/wp-content/uploads/2020/08/3-1.png",
       },
       name: {
         type: DataTypes.STRING,

@@ -17,10 +17,12 @@ module.exports = {
       // },
       id_item: {
         type: Sequelize.INTEGER,
+        primaryKey: true,
         references: { model: "Items", key: "id_item" },
       },
       id_customer: {
         type: Sequelize.INTEGER,
+        primaryKey: true,
         references: { model: "Customers", key: "id_customer" },
       },
       rating: {

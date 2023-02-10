@@ -6,7 +6,7 @@ const { QueryTypes } = require("sequelize");
 const cookieParser = require("cookie-parser");
 const session = require('express-session');
 const path = require("path");
-const port = 3000;
+const port = 3005;
 const app = express();
 
 app.use(cookieParser());

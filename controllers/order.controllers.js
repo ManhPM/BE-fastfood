@@ -20,11 +20,14 @@ const getAllOrder = async (req, res) => {
           raw: true,
         }
       );
-      const orderList = await Order.findAll({
-        where: {
-          id_customer: customer[0].id_customer,
-        },
-      });
+      const orderList = await Order.sequelize.query(
+        "SELECT O.*, P.name FROM orders as O, payments as P WHERE P.id_payment = O.id_payment AND O.id_customer = :id_customer",
+        {
+          replacements: { id_customer: customer[0].id_customer },
+          type: QueryTypes.SELECT,
+          raw: true,
+        }
+      );
       res.status(200).json(orderList);
     } else {
       const orderList = await Order.findAll({});

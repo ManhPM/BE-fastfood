@@ -3,51 +3,81 @@ const { QueryTypes } = require('sequelize');
 
 const getAllItem = async (req, res) => {
     const { name } = req.query;
-    const { id_type, typesort} = req.body
+    const { id_type } = req.body
+    const { typesort } = req.body || 1
     const perPage = 12;
-    const page = req.params.page || 1;
+    const page = req.params.page || 0;
     try {
         if(name){
             if(id_type){
                 const itemList = await Item.sequelize.query(
-                    "SELECT I.*, T.name as name_type FROM items AS I, types as T WHERE T.id_type = I.id_type AND I.name COLLATE UTF8_GENERAL_CI LIKE :name AND I.id_type = :id_type", 
+                    "SELECT I.*, T.name as name_type, (SELECT ROUND(AVG(R.rating) * 2, 0) / 2 FROM reviews AS R WHERE R.id_item = I.id_item) as rating FROM items as I, types as T WHERE T.id_type = I.id_type AND T.id_type = :id_type AND I.name COLLATE UTF8_GENERAL_CI LIKE :name LIMIT :from,:perPage", 
                 { 
-                    replacements: { name: `%${name}%`, id_type: id_type},
+                    replacements: { name: `%${name}%`, from: page*perPage, perPage: perPage, id_type: id_type },
                     type: QueryTypes.SELECT,
                     raw: true
                 });
-                res.status(200).json(itemList)
+                const count = await Item.sequelize.query(
+                    "SELECT CEILING((COUNT(I.id_item)/(:perPage))) as totalPage FROM items as I, types as T WHERE T.id_type = I.id_type AND T.id_type = :id_type AND I.name COLLATE UTF8_GENERAL_CI LIKE :name", 
+                { 
+                    replacements: { name: `%${name}%`, perPage: perPage, id_type: id_type },
+                    type: QueryTypes.SELECT,
+                    raw: true
+                });
+                res.status(200).json({totalPage: count[0].totalPage, currentPage: page + 1, itemList})
             }
             else {
                 const itemList = await Item.sequelize.query(
-                    "SELECT I.*, T.name as name_type FROM items AS I, types as T WHERE T.id_type = I.id_type AND I.name COLLATE UTF8_GENERAL_CI LIKE :name", 
+                    "SELECT I.*, T.name as name_type, (SELECT ROUND(AVG(R.rating) * 2, 0) / 2 FROM reviews AS R WHERE R.id_item = I.id_item) as rating FROM items as I, types as T WHERE T.id_type = I.id_type AND I.name COLLATE UTF8_GENERAL_CI LIKE :name LIMIT :from,:perPage", 
                 { 
-                    replacements: { name: `%${name}%` },
+                    replacements: { name: `%${name}%`, from: page*perPage, perPage: perPage },
                     type: QueryTypes.SELECT,
                     raw: true
                 });
-                res.status(200).json(itemList)
+                const count = await Item.sequelize.query(
+                    "SELECT CEILING((COUNT(I.id_item)/(:perPage))) as totalPage FROM items as I, types as T WHERE T.id_type = I.id_type AND I.name COLLATE UTF8_GENERAL_CI LIKE :name", 
+                { 
+                    replacements: { name: `%${name}%`, perPage: perPage },
+                    type: QueryTypes.SELECT,
+                    raw: true
+                });
+                res.status(200).json({totalPage: count[0].totalPage, currentPage: page + 1, itemList})
             }
         }
         else {
             if(id_type){
                 const itemList = await Item.sequelize.query(
-                    "SELECT I.*, T.name as name_type FROM items AS I, types as T WHERE T.id_type = I.id_type AND I.id_type = :id_type", 
+                    "SELECT DISTINCT I.*, T.name as name_type, (SELECT ROUND(AVG(R.rating) * 2, 0) / 2 FROM reviews AS R WHERE R.id_item = I.id_item) as rating FROM items as I, types as T, reviews as R WHERE T.id_type = I.id_type AND T.id_type = :id_type LIMIT :from,:perPage", 
                 { 
-                    replacements: { id_type: id_type },
+                    replacements: { id_type: id_type, from: page*perPage, perPage: perPage },
                     type: QueryTypes.SELECT,
                     raw: true
                 });
-                res.status(200).json(itemList)
+                const count = await Item.sequelize.query(
+                    "SELECT CEILING((COUNT(I.id_item)/(:perPage))) as totalPage FROM items as I, types as T WHERE T.id_type = I.id_type AND T.id_type = :id_type", 
+                { 
+                    replacements: { perPage: perPage, id_type: id_type },
+                    type: QueryTypes.SELECT,
+                    raw: true
+                });
+                res.status(200).json({totalPage: count[0].totalPage, currentPage: page + 1, itemList})
             }
             else {
                 const itemList = await Item.sequelize.query(
-                    "SELECT I.*, T.name as name_type FROM items AS I, types as T WHERE T.id_type = I.id_type", 
+                    "SELECT I.*, T.name = name_type, (SELECT ROUND(AVG(R.rating) * 2, 0) / 2 FROM reviews AS R WHERE R.id_item = I.id_item) as rating FROM items as I, types as T WHERE T.id_type = I.id_type LIMIT :from,:perPage", 
                 { 
+                    replacements: { from: page*perPage, perPage: perPage },
                     type: QueryTypes.SELECT,
                     raw: true
                 });
-                res.status(200).json(itemList)
+                const count = await Item.sequelize.query(
+                    "SELECT CEILING((COUNT(I.id_item)/(:perPage))) AS totalPage FROM items as I, types as T WHERE T.id_type = I.id_type", 
+                { 
+                    replacements: { perPage: perPage },
+                    type: QueryTypes.SELECT,
+                    raw: true
+                });
+            res.status(200).json({totalPage: count[0].totalPage, currentPage: page + 1, itemList})
             }
         }
     } catch (error) {

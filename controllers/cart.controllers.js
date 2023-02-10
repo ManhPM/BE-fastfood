@@ -1,9 +1,10 @@
-const { Cart, Cart_detail, Item, Order, Order_detail } = require("../models");
+const { Cart, Cart_detail, Item, Order, Order_detail, Payment } = require("../models");
 const { QueryTypes } = require('sequelize');
 
 const getAllItemInCart = async (req, res) => {
     const { name } = req.query;
     try {
+        const paymentList = await Payment.findAll({});
         if(name){
             const itemList = await Item.sequelize.query(
                 "SELECT CD.*, I.name, I.price, (I.price*CD.quantity) as amount FROM carts as C, cart_details as CD, items as I, accounts as A, customers as CU WHERE A.id_account = CU.id_account AND CU.id_customer = C.id_customer AND C.id_cart = CD.id_cart AND CD.id_item = I.id_item AND A.username = :username AND I.name COLLATE UTF8_GENERAL_CI LIKE :name", 
@@ -12,7 +13,7 @@ const getAllItemInCart = async (req, res) => {
                 type: QueryTypes.SELECT,
                 raw: true
             });
-            res.status(200).json(itemList)
+            res.status(200).json({ itemList, paymentList })
         }
         else {
             const itemList = await Item.sequelize.query(
@@ -22,10 +23,10 @@ const getAllItemInCart = async (req, res) => {
                 type: QueryTypes.SELECT,
                 raw: true
             });
-            res.status(200).json(itemList)
+            res.status(200).json({ itemList, paymentList })
         }
     } catch (error) {
-        res.status(500).json(error);
+        res.status(500).json(error);    
     }
 }
 
@@ -159,6 +160,7 @@ const deleteOneItemInCart = async (req, res) => {
 }
 
 const order = async (req, res) => {
+    const {id_payment} = req.body
     try {
         const info = await Cart.sequelize.query(
             "SELECT C.* FROM carts as C, customers as CU, accounts as A WHERE A.username = :username AND CU.id_account = A.id_account AND CU.id_customer = C.id_customer", 
@@ -175,7 +177,7 @@ const order = async (req, res) => {
         const date = new Date();
         date.setHours(date.getHours() + 7)
         console.log(date, info[0].id_customer)
-        const newOrder = await Order.create({ datetime: date, id_customer: info[0].id_customer, status: 0});
+        const newOrder = await Order.create({ id_payment, datetime: date, id_customer: info[0].id_customer, status: 0});
         let i = 0;
         while(itemInCartList[i]){
             await Order_detail.create({id_order: newOrder.id_order, id_item: itemInCartList[i].id_item, quantity: itemInCartList[i].quantity});

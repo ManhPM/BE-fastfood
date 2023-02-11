@@ -18,10 +18,10 @@ const createAccountForCustomer = async (req, res) => {
     });
     const customer = await Customer.findOne({
       where: {
-        email
-      }
-    })
-    if(customer){
+        email,
+      },
+    });
+    if (customer) {
       customer.id_account = newAccount.id_account;
       await customer.save();
 
@@ -32,14 +32,13 @@ const createAccountForCustomer = async (req, res) => {
       const newWishList = await Wishlist.create({
         id_customer: customer.id_customer,
       });
-    }
-    else {
+    } else {
       const newCustomer = await Customer.create({
         id_account: newAccount.id_account,
-        name, 
-        email, 
-        phone, 
-        address
+        name,
+        email,
+        phone,
+        address,
       });
       const newCart = await Cart.create({
         id_customer: newCustomer.id_customer,
@@ -48,7 +47,7 @@ const createAccountForCustomer = async (req, res) => {
         id_customer: newCustomer.id_customer,
       });
       res.status(200).json({
-        message: "Thao tác thành công!",
+        message: "Tạo tài khoản thành công!",
       });
     }
   } catch (error) {
@@ -67,6 +66,11 @@ const login = async (req, res) => {
   });
   const isAuth = bcrypt.compareSync(password, account.password);
   if (isAuth) {
+    const customer = await Customer.findOne({
+      where: {
+        id_account: account.id_account,
+      },
+    });
     const token = jwt.sign({ username: account.username }, "manhpham2k1", {
       expiresIn: 60 * 60 * 6,
     });
@@ -76,9 +80,9 @@ const login = async (req, res) => {
         secure: process.env.NODE_ENV === "production",
       })
       .status(200)
-      .json({message: "Đăng nhập thành công!", token});
+      .json({ message: "Đăng nhập thành công!", userInfo: customer });
   } else {
-    res.status(201).json({message: "Sai thông tin đăng nhập!"});
+    res.status(201).json({ message: "Sai thông tin đăng nhập!" });
   }
 };
 
@@ -93,25 +97,31 @@ const updateAccount = async (req, res) => {
     const isAuth = bcrypt.compareSync(oldpassword, accountUpdate.password);
     if (isAuth) {
       if (newpassword == repeatpassword) {
-        //tạo ra một chuỗi ngẫu nhiên
-        const salt = bcrypt.genSaltSync(10);
-        //mã hoá salt + password
-        const hashPassword = bcrypt.hashSync(newpassword, salt);
-        if (accountUpdate.active == 0) {
-          accountUpdate.active = 1;
+        if (newpassword == oldpassword) {
+          res.status(201).json({
+            message: "Mật khẩu mới không được giống với mật khẩu cũ!",
+          });
+        } else {
+          //tạo ra một chuỗi ngẫu nhiên
+          const salt = bcrypt.genSaltSync(10);
+          //mã hoá salt + password
+          const hashPassword = bcrypt.hashSync(newpassword, salt);
+          if (accountUpdate.active == 0) {
+            accountUpdate.active = 1;
+          }
+          accountUpdate.password = hashPassword;
+          await accountUpdate.save();
+          res.status(200).json({
+            message: "Đổi mật khẩu thành công!",
+          });
         }
-        accountUpdate.password = hashPassword;
-        await accountUpdate.save();
-        res.status(200).json({
-          message: "Thao tác thành công!",
-        });
       } else {
-        res.status(200).json({
+        res.status(201).json({
           message: "Mật khẩu lặp lại không đúng!",
         });
       }
     } else {
-      res.status(200).json({
+      res.status(201).json({
         message: "Mật khẩu không chính xác!",
       });
     }
@@ -266,7 +276,8 @@ const logout = async (req, res, next) => {
 
 module.exports = {
   // getDetailTaiKhoan,
-  login,logout,
+  login,
+  logout,
   createAccountForCustomer,
   // information,
   // create,

@@ -1,10 +1,10 @@
-const { Wishlist_detail, Type } = require("../models");
+const { Type } = require("../models");
 const { QueryTypes } = require("sequelize");
 
 const getAllType = async (req, res) => {
   try {
     const typeList = await Type.sequelize.query(
-      "SELECT T.*, COUNT(I.id_item) as quantity FROM types as T, items as I WHERE I.id_type = T.id_type group by T.name",
+      "SELECT T.*, COUNT(I.id_item) as quantity FROM types as T, items as I WHERE I.id_type = T.id_type group by T.id_type",
       {
         type: QueryTypes.SELECT,
         raw: true,

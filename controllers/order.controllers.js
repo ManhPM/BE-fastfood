@@ -42,14 +42,22 @@ const getAllItemInOrder = async (req, res) => {
   const { id_order } = req.params;
   try {
     const orderDetailList = await Order.sequelize.query(
-      "SELECT OD.*, I.name FROM items as I, order_details as OD, orders as O WHERE OD.id_item = I.id_item AND O.id_order = OD.id_order AND O.id_order = :id_order",
+      "SELECT OD.*, I.name, I.price, (I.price*OD.quantity) as amount FROM orders as O, order_details as OD, items as I WHERE O.id_order = OD.id_order AND OD.id_item = I.id_item AND O.id_order = :id_order",
       {
         replacements: { id_order: id_order },
         type: QueryTypes.SELECT,
         raw: true,
       }
     );
-    res.status(200).json(orderDetailList);
+    const total = await Order.sequelize.query(
+      "SELECT SUM((I.price*OD.quantity)) as total FROM orders as O, order_details as OD, items as I WHERE O.id_order = OD.id_order AND OD.id_item = I.id_item AND O.id_order = :id_order",
+      {
+        replacements: { id_order: id_order },
+        type: QueryTypes.SELECT,
+        raw: true,
+      }
+    );
+    res.status(200).json({orderDetailList, total: total[0].total});
   } catch (error) {
     res.status(500).json(error);
   }

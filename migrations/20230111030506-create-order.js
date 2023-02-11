@@ -25,6 +25,9 @@ module.exports = {
         type: Sequelize.INTEGER,
         references: { model: "Payments", key: "id_payment" },
       },
+      description: {
+        type: Sequelize.STRING,
+      },
       datetime: {
         allowNull: false,
         type: Sequelize.DATE,

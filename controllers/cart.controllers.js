@@ -160,7 +160,7 @@ const deleteOneItemInCart = async (req, res) => {
 }
 
 const order = async (req, res) => {
-    const {id_payment} = req.body
+    const {id_payment, description} = req.body
     try {
         const info = await Cart.sequelize.query(
             "SELECT C.* FROM carts as C, customers as CU, accounts as A WHERE A.username = :username AND CU.id_account = A.id_account AND CU.id_customer = C.id_customer", 
@@ -174,22 +174,26 @@ const order = async (req, res) => {
                 id_cart: info[0].id_cart
             }
         })
-        const date = new Date();
-        date.setHours(date.getHours() + 7)
-        console.log(date, info[0].id_customer)
-        const newOrder = await Order.create({ id_payment, datetime: date, id_customer: info[0].id_customer, status: 0});
-        let i = 0;
-        while(itemInCartList[i]){
-            await Order_detail.create({id_order: newOrder.id_order, id_item: itemInCartList[i].id_item, quantity: itemInCartList[i].quantity});
-            await Cart_detail.destroy({
-                where: {
-                    id_item: itemInCartList[i].id_item,
-                    id_cart: itemInCartList[i].id_cart
-                }
-            });
-            i++;
+        if(itemInCartList.length){
+            const date = new Date();
+            date.setHours(date.getHours() + 7)
+            const newOrder = await Order.create({description, id_payment, datetime: date, id_customer: info[0].id_customer, status: 0});
+            let i = 0;
+            while(itemInCartList[i]){
+                await Order_detail.create({id_order: newOrder.id_order, id_item: itemInCartList[i].id_item, quantity: itemInCartList[i].quantity});
+                await Cart_detail.destroy({
+                    where: {
+                        id_item: itemInCartList[i].id_item,
+                        id_cart: itemInCartList[i].id_cart
+                    }
+                });
+                i++;
+            }
+            res.status(201).json({message: "Đặt hàng thành công!"});
         }
-        res.status(201).json({message: "Đặt hàng thành công!"});
+        else {
+            res.status(202).json({message: "Giỏ hàng của bạn đang trống!"});
+        }
     } catch (error) {
         res.status(500).json({message: "Đặt hàng thất bại!"});
     }

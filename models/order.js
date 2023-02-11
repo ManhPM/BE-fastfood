@@ -28,6 +28,7 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
       },
       datetime: { type: DataTypes.DATE, allowNull: false },
+      description: { type: DataTypes.STRING, allowNull: true },
       status: { type: DataTypes.INTEGER, allowNull: false },
     },
     {

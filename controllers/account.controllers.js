@@ -21,7 +21,6 @@ const createAccountForCustomer = async (req, res) => {
         email
       }
     })
-    console.log(customer);
     if(customer){
       customer.id_account = newAccount.id_account;
       await customer.save();
@@ -61,7 +60,6 @@ const createAccountForCustomer = async (req, res) => {
 
 const login = async (req, res) => {
   const { username, password } = req.body;
-  console.log(username)
   const account = await Account.findOne({
     where: {
       username,

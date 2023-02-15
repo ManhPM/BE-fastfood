@@ -10,7 +10,7 @@ const accountRouter = express.Router();
 accountRouter.post("/login", checkLogin(Account), login);
 accountRouter.get("/logout", authenticate, logout);
 accountRouter.post("/create", checkCreateAccount(Account), createAccountForCustomer);
-accountRouter.put("/", authenticate, checkExistAccount(Account), updateAccount);
+accountRouter.put("/changepassword", authenticate, checkExistAccount(Account), updateAccount);
 
 // khoRouter.get("/new", authenticate, authorize(["Nhân viên","Quản lý"]), create);
 // khoRouter.get("/", authenticate, authorize(["Nhân viên","Quản lý"]), getAllKho);

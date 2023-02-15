@@ -32,6 +32,10 @@ module.exports = {
       comment: {
         type: Sequelize.STRING,
       },
+      datetime: {
+        type: Sequelize.DATE,
+        allowNull: false
+      },
     });
   },
   async down(queryInterface, Sequelize) {

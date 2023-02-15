@@ -17,6 +17,28 @@ module.exports = {
         id_customer: 2,
         rating: 5,
         comment: "Món ăn rất tuyệt vơi",
+        datetime: "2023-01-01 08:30:00",
+      },
+      {
+        id_item: 2,
+        id_customer: 2,
+        rating: 3,
+        comment: "Món ăn tạm được",
+        datetime: "2023-01-01 08:30:00",
+      },
+      {
+        id_item: 1,
+        id_customer: 1,
+        rating: 5,
+        comment: "Được đấy",
+        datetime: "2023-02-13 08:30:00",
+      },
+      {
+        id_item: 4,
+        id_customer: 1,
+        rating: 1,
+        comment: "Tệ lắm nha",
+        datetime: "2023-02-13 08:30:00",
       },
     ]);
   },

@@ -1,15 +1,16 @@
 const express = require("express");
 const {sequelize} = require("./models");
 const {rootRouter} = require("./routers")
-const jwt = require("jsonwebtoken");
 const { QueryTypes } = require("sequelize");
 const cookieParser = require("cookie-parser");
 const session = require('express-session');
 const path = require("path");
 const port = 3005;
 const app = express();
+const cors = require("cors");
 
 app.use(cookieParser());
+app.use(cors());
 //cài ứng dụng sử dụng json
 app.use(express.json());
 //cài static file

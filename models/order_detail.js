@@ -35,6 +35,7 @@ module.exports = (sequelize, DataTypes) => {
         references: { model: "Item", key: "id_item" },
       },
       quantity: { type: DataTypes.INTEGER, allowNull: false },
+      isReviewed: { type: DataTypes.INTEGER, allowNull: false },
     },
     {
       sequelize,

@@ -3,7 +3,7 @@ const {getAllItem, getDetailItem} = require("../controllers/item.controllers");
 const itemRouter = express.Router();
 
 itemRouter.get("/", getAllItem);
-itemRouter.get("/:id_item", getDetailItem);
+itemRouter.get("/detail/:id_item", getDetailItem);
 
 module.exports = {
     itemRouter,

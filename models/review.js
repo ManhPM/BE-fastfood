@@ -38,6 +38,11 @@ module.exports = (sequelize, DataTypes) => {
       },
       rating: { type: DataTypes.INTEGER, allowNull: false },
       comment: DataTypes.STRING,
+      datetime: { 
+        primaryKey: true,
+        type: DataTypes.DATE,
+        allowNull: false
+      },
     },
     {
       sequelize,

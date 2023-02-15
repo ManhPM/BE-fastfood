@@ -6,9 +6,9 @@ const {authorize} = require("../middlewares/auth/authorize.js")
 const cartRouter = express.Router();
 
 cartRouter.get("/", authenticate, authorize(["Khách hàng"]), getAllItemInCart);
-cartRouter.post("/:id_item", authenticate, authorize(["Khách hàng"]), createItemInCart);
-cartRouter.post("/", authenticate, authorize(["Khách hàng"]), order);
-cartRouter.delete("/:id_item", authenticate, authorize(["Khách hàng"]), deleteOneItemInCart);
+cartRouter.post("/add/:id_item", authenticate, authorize(["Khách hàng"]), createItemInCart);
+cartRouter.post("/checkout", authenticate, authorize(["Khách hàng"]), order);
+cartRouter.delete("/remove/:id_item", authenticate, authorize(["Khách hàng"]), deleteOneItemInCart);
 cartRouter.post("/decrease/:id_item", authenticate, authorize(["Khách hàng"]), decreaseNumItemInCart);
 cartRouter.post("/increase/:id_item", authenticate, authorize(["Khách hàng"]), increaseNumItemInCart);
 

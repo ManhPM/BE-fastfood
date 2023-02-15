@@ -66,13 +66,14 @@ const login = async (req, res) => {
   });
   const isAuth = bcrypt.compareSync(password, account.password);
   if (isAuth) {
+    const expireTime = 30 * 60;
     const customer = await Customer.findOne({
       where: {
         id_account: account.id_account,
       },
     });
     const token = jwt.sign({ username: account.username }, "manhpham2k1", {
-      expiresIn: 60 * 60 * 6,
+      expiresIn: expireTime,
     });
     res
       .cookie("access_token", token, {
@@ -80,24 +81,24 @@ const login = async (req, res) => {
         secure: process.env.NODE_ENV === "production",
       })
       .status(200)
-      .json({ message: "Đăng nhập thành công!", userInfo: customer });
+      .json({ message: "Đăng nhập thành công!", userInfo: customer, expireTime });
   } else {
     res.status(201).json({ message: "Sai thông tin đăng nhập!" });
   }
 };
 
 const updateAccount = async (req, res) => {
-  const { oldpassword, newpassword, repeatpassword } = req.body;
+  const { oldPassword, newPassword, repeatPassword } = req.body;
   try {
     const accountUpdate = await Account.findOne({
       where: {
         username: req.username,
       },
     });
-    const isAuth = bcrypt.compareSync(oldpassword, accountUpdate.password);
+    const isAuth = bcrypt.compareSync(oldPassword, accountUpdate.password);
     if (isAuth) {
-      if (newpassword == repeatpassword) {
-        if (newpassword == oldpassword) {
+      if (newPassword == repeatPassword) {
+        if (newPassword == oldPassword) {
           res.status(201).json({
             message: "Mật khẩu mới không được giống với mật khẩu cũ!",
           });
@@ -105,7 +106,7 @@ const updateAccount = async (req, res) => {
           //tạo ra một chuỗi ngẫu nhiên
           const salt = bcrypt.genSaltSync(10);
           //mã hoá salt + password
-          const hashPassword = bcrypt.hashSync(newpassword, salt);
+          const hashPassword = bcrypt.hashSync(newPassword, salt);
           if (accountUpdate.active == 0) {
             accountUpdate.active = 1;
           }
@@ -217,8 +218,8 @@ const logout = async (req, res, next) => {
 
 // const accessForgotPassword = async (req, res, next) => {
 //   const { username } = req.params;
-//   const { password, repeatpassword } = req.body;
-//   if (password != repeatpassword) {
+//   const { password, repeatPassword } = req.body;
+//   if (password != repeatPassword) {
 //     res.status(200).json("taikhoans/vertifypw", {
 //       message: "Mật khẩu không khớp!",
 //     });

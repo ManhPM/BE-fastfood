@@ -41,7 +41,7 @@ const checkLogin = (Model) => {
     if (account) {
       next();
     } else {
-      res.status(404).send({ message: "Không tìm thấy Account!" });
+      res.status(404).send({ message: "Không tìm thấy Account!", isSuccess: false});
     }
   };
 };

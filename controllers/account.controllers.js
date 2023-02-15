@@ -81,9 +81,9 @@ const login = async (req, res) => {
         secure: process.env.NODE_ENV === "production",
       })
       .status(200)
-      .json({ message: "Đăng nhập thành công!", userInfo: customer, expireTime });
+      .json({ message: "Đăng nhập thành công!", userInfo: customer, expireTime, isSuccess: true});
   } else {
-    res.status(201).json({ message: "Sai thông tin đăng nhập!" });
+    res.status(201).json({ message: "Sai thông tin đăng nhập!" , isSuccess: false});
   }
 };
 

@@ -17,14 +17,14 @@ module.exports = {
         id_payment: 2,
         id_customer: 2,
         datetime: "2023-01-01 08:30:00",
-        desciption: "Lấy thêm nước chấm giúp em ạ!"
+        description: "Lấy thêm nước chấm giúp em ạ!"
       },
       {
         id_order: 2,
         id_payment: 1,
         id_customer: 1,
         datetime: "2023-01-15 21:30:00",
-        desciption: "Không cần lấy tương ớt nhé shop!"
+        description: "Không cần lấy tương ớt nhé shop!"
       },
     ]);
   },

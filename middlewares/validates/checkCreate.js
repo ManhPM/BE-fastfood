@@ -9,7 +9,7 @@ const checkCreateAccount = (Model) => {
     if (!account) {
       next();
     } else {
-      res.status(404).send({ message: "Username đã tồn tại!" });
+      res.status(404).send({ message: "Username đã tồn tại!" , isSuccess: false });
     }
   };
 };

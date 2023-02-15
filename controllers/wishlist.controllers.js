@@ -53,14 +53,14 @@ const updateItemInWishList = async (req, res) => {
                     id_wishlist: info[0].id_wishlist
                 }
             });
-            res.status(201).json({message: "Đã xoá khỏi mục yêu thích!"});
+            res.status(201).json({message: "Đã xoá khỏi danh sách yêu thích!", isSuccess: true});
         }
         else {
             await Wishlist_detail.create({ id_item, id_wishlist: info[0].id_wishlist });
-            res.status(201).json({message: "Đã thêm vào danh sách yêu thích!"});
+            res.status(201).json({message: "Đã thêm vào danh sách yêu thích!", isSuccess: true});
         }
     } catch (error) {
-        res.status(500).json({message: "Thao tác thất bại!"});
+        res.status(500).json({message: "Thao tác thất bại!", isSuccess: false});
     }
 }
 

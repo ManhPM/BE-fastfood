@@ -48,11 +48,13 @@ const createAccountForCustomer = async (req, res) => {
       });
       res.status(200).json({
         message: "Tạo tài khoản thành công!",
+        isSuccess: true 
       });
     }
   } catch (error) {
     res.status(500).json({
       message: "Thao tác thất bại!",
+      isSuccess: false 
     });
   }
 };
@@ -101,6 +103,7 @@ const updateAccount = async (req, res) => {
         if (newPassword == oldPassword) {
           res.status(201).json({
             message: "Mật khẩu mới không được giống với mật khẩu cũ!",
+            isSuccess: false 
           });
         } else {
           //tạo ra một chuỗi ngẫu nhiên
@@ -114,21 +117,25 @@ const updateAccount = async (req, res) => {
           await accountUpdate.save();
           res.status(200).json({
             message: "Đổi mật khẩu thành công!",
+            isSuccess: true 
           });
         }
       } else {
         res.status(201).json({
           message: "Mật khẩu lặp lại không đúng!",
+          isSuccess: false 
         });
       }
     } else {
       res.status(201).json({
         message: "Mật khẩu không chính xác!",
+        isSuccess: false 
       });
     }
   } catch (error) {
-    res.status(500).json("taikhoans/notification", {
+    res.status(500).json({
       message: "Thao tác thất bại!",
+      isSuccess: false 
     });
   }
 };
@@ -137,7 +144,7 @@ const logout = async (req, res, next) => {
   res
     .clearCookie("access_token")
     .status(200)
-    .json({ message: "Đăng xuất thành công!" });
+    .json({ message: "Đăng xuất thành công!", isSuccess: true });
 };
 
 // const forgotPassword = async (req, res, next) => {

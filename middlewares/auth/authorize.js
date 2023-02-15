@@ -15,7 +15,7 @@ const authorize = (arrType) => async (req, res, next) => {
     if(arrType.findIndex((ele) => ele === role[0].name) > -1) {
         next();
     }else {
-        res.status(403).json({message: "Bạn không có quyền sử dụng chức năng này!"});
+        res.status(403).json({message: "Bạn không có quyền sử dụng chức năng này!", isSuccess: false });
     }
 };
 

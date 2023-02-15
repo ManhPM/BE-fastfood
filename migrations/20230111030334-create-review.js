@@ -33,6 +33,7 @@ module.exports = {
         type: Sequelize.STRING,
       },
       datetime: {
+        primaryKey: true,
         type: Sequelize.DATE,
         allowNull: false
       },

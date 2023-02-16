@@ -48,13 +48,11 @@ const createAccountForCustomer = async (req, res) => {
       });
       res.status(200).json({
         message: "Tạo tài khoản thành công!",
-        isSuccess: true,
       });
     }
   } catch (error) {
     res.status(500).json({
       message: "Thao tác thất bại!",
-      isSuccess: false,
     });
   }
 };
@@ -87,8 +85,8 @@ const login = async (req, res) => {
         .json({
           message: "Đăng nhập thành công!",
           userInfo: customer,
+          token,
           expireTime,
-          isSuccess: true,
         });
     } else {
       res.status(404).json({message: "Sai thông tin đăng nhập!"});
@@ -112,7 +110,6 @@ const changePassword = async (req, res) => {
         if (newPassword == oldPassword) {
           res.status(400).json({
             message: "Mật khẩu mới không được giống với mật khẩu cũ!",
-            isSuccess: false,
           });
         } else {
           //tạo ra một chuỗi ngẫu nhiên
@@ -126,25 +123,21 @@ const changePassword = async (req, res) => {
           await accountUpdate.save();
           res.status(200).json({
             message: "Đổi mật khẩu thành công!",
-            isSuccess: true,
           });
         }
       } else {
         res.status(400).json({
           message: "Mật khẩu lặp lại không đúng!",
-          isSuccess: false,
         });
       }
     } else {
       res.status(400).json({
         message: "Mật khẩu không chính xác!",
-        isSuccess: false,
       });
     }
   } catch (error) {
     res.status(500).json({
       message: "Thao tác thất bại!",
-      isSuccess: false,
     });
   }
 };
@@ -168,7 +161,6 @@ const forgotPassword = async (req, res) => {
     if (isExist !== null) {
       res.status(400).json({
         message: `Có lỗi xảy ra vui lòng thử lại!`,
-        isSuccess: false,
       });
     } else {
       const account = await Account.sequelize.query(
@@ -206,14 +198,13 @@ const forgotPassword = async (req, res) => {
         subject: "FORGOT PASSWORD", // Subject line
         text: "FORGOT PASSWORD", // plain text body
         html: `Mã xác nhận của bạn là: ${randomID}`, // html body
-      });
+      })
       var s2 = account[0].email;
       var s1 = s2.substring(0, s2.length - 15);
       var s3 = s2.substring(s2.length - 15, s2.length);
       var email = s1 + s3.replace(/\S/gi, "*");
       res.status(200).json({
         message: `Mã xác minh đã được gửi về email: ${email} vui lòng kiểm tra hòm thư!`,
-        isSuccess: true,
       });
     }
   } catch (error) {

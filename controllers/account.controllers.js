@@ -48,48 +48,57 @@ const createAccountForCustomer = async (req, res) => {
       });
       res.status(200).json({
         message: "Tạo tài khoản thành công!",
-        isSuccess: true 
+        isSuccess: true,
       });
     }
   } catch (error) {
     res.status(500).json({
       message: "Thao tác thất bại!",
-      isSuccess: false 
+      isSuccess: false,
     });
   }
 };
 
 const login = async (req, res) => {
   const { username, password } = req.body;
-  const account = await Account.findOne({
-    where: {
-      username,
-    },
-  });
-  const isAuth = bcrypt.compareSync(password, account.password);
-  if (isAuth) {
-    const expireTime = 30 * 60;
-    const customer = await Customer.findOne({
+  try {
+    const account = await Account.findOne({
       where: {
-        id_account: account.id_account,
+        username,
       },
     });
-    const token = jwt.sign({ username: account.username }, "manhpham2k1", {
-      expiresIn: expireTime,
-    });
-    res
-      .cookie("access_token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-      })
-      .status(200)
-      .json({ message: "Đăng nhập thành công!", userInfo: customer, expireTime, isSuccess: true});
-  } else {
-    res.status(201).json({ message: "Sai thông tin đăng nhập!" , isSuccess: false});
+    const isAuth = bcrypt.compareSync(password, account.password);
+    if (isAuth) {
+      const expireTime = 30 * 60;
+      const customer = await Customer.findOne({
+        where: {
+          id_account: account.id_account,
+        },
+      });
+      const token = jwt.sign({ username: account.username }, "manhpham2k1", {
+        expiresIn: expireTime,
+      });
+      res
+        .cookie("access_token", token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+        })
+        .status(200)
+        .json({
+          message: "Đăng nhập thành công!",
+          userInfo: customer,
+          expireTime,
+          isSuccess: true,
+        });
+    } else {
+      throw {"message":"Sai thông tin đăng nhập!"}
+    }
+  } catch (error) {
+    res.status(500).json(error);
   }
 };
 
-const updateAccount = async (req, res) => {
+const changePassword = async (req, res) => {
   const { oldPassword, newPassword, repeatPassword } = req.body;
   try {
     const accountUpdate = await Account.findOne({
@@ -103,7 +112,7 @@ const updateAccount = async (req, res) => {
         if (newPassword == oldPassword) {
           res.status(201).json({
             message: "Mật khẩu mới không được giống với mật khẩu cũ!",
-            isSuccess: false 
+            isSuccess: false,
           });
         } else {
           //tạo ra một chuỗi ngẫu nhiên
@@ -117,25 +126,25 @@ const updateAccount = async (req, res) => {
           await accountUpdate.save();
           res.status(200).json({
             message: "Đổi mật khẩu thành công!",
-            isSuccess: true 
+            isSuccess: true,
           });
         }
       } else {
         res.status(201).json({
           message: "Mật khẩu lặp lại không đúng!",
-          isSuccess: false 
+          isSuccess: false,
         });
       }
     } else {
       res.status(201).json({
         message: "Mật khẩu không chính xác!",
-        isSuccess: false 
+        isSuccess: false,
       });
     }
   } catch (error) {
     res.status(500).json({
       message: "Thao tác thất bại!",
-      isSuccess: false 
+      isSuccess: false,
     });
   }
 };
@@ -147,59 +156,127 @@ const logout = async (req, res, next) => {
     .json({ message: "Đăng xuất thành công!", isSuccess: true });
 };
 
+const forgotPassword = async (req, res) => {
+  const { username } = req.body;
+  try {
+    const randomID = Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
+    const isExist = await Account.findOne({
+      where: {
+        forgot: randomID,
+      },
+    });
+    if (isExist !== null) {
+      res.status(200).json({
+        message: `Có lỗi xảy ra vui lòng thử lại!`,
+        isSuccess: false,
+      });
+    } else {
+      const account = await Account.sequelize.query(
+        "SELECT CU.email FROM customers as CU, accounts as A WHERE A.id_account = CU.id_account AND A.username = :username",
+        {
+          type: QueryTypes.SELECT,
+          replacements: {
+            username: username,
+          },
+        }
+      );
+      await Account.sequelize.query(
+        "UPDATE accounts SET forgot = :randomID WHERE username = :username",
+        {
+          type: QueryTypes.UPDATE,
+          replacements: {
+            randomID: randomID,
+            username: username,
+          },
+        }
+      );
+      let transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+          user: "n19dccn107@student.ptithcm.edu.vn", // generated ethereal user
+          pass: "bqztpfkmmbpzmdxl", // generated ethereal password
+        },
+      });
+      // send mail with defined transport object
+      let info = await transporter.sendMail({
+        from: "n19dccn107@student.ptithcm.edu.vn", // sender address
+        to: `${account[0].email}`, // list of receivers
+        subject: "FORGOT PASSWORD", // Subject line
+        text: "FORGOT PASSWORD", // plain text body
+        html: `Mã xác nhận của bạn là: ${randomID}`, // html body
+      });
+      var s2 = account[0].email;
+      var s1 = s2.substring(0, s2.length - 15);
+      var s3 = s2.substring(s2.length - 15, s2.length);
+      var email = s1 + s3.replace(/\S/gi, "*");
+      res.status(200).json({
+        message: `Mã xác minh đã được gửi về email: ${email} vui lòng kiểm tra hòm thư!`,
+        isSuccess: true,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 // const forgotPassword = async (req, res, next) => {
 //   const { username } = req.body;
 //   const randomID = Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
-//   const taiKhoan = await Account.sequelize.query(
-//     "SELECT NV.email FROM nhanviens as NV, taikhoans as TK WHERE TK.maNV = NV.maNV AND TK.username = :username",
-//     {
-//       type: QueryTypes.SELECT,
-//       replacements: {
-//         username: username,
-//       },
-//     }
-//   );
-//   if (taiKhoan) {
-//     const result = await Account.sequelize.query(
-//       "UPDATE taikhoans SET forgot = :randomID WHERE username = :username",
+//   try {
+//     const account = await Account.sequelize.query(
+//       "SELECT CU.email FROM customers as CU, accounts as A WHERE A.id_account = CU.id_account AND A.username = :username",
 //       {
-//         type: QueryTypes.UPDATE,
+//         type: QueryTypes.SELECT,
 //         replacements: {
-//           randomID: randomID,
 //           username: username,
 //         },
 //       }
 //     );
-//     // Generate test SMTP service account from ethereal.email
-//     // Only needed if you don't have a real mail account for testing
+//     if (account) {
+//       await Account.sequelize.query(
+//         "UPDATE account SET forgot = :randomID WHERE username = :username",
+//         {
+//           type: QueryTypes.UPDATE,
+//           replacements: {
+//             randomID: randomID,
+//             username: username,
+//           },
+//         }
+//       );
 
-//     // create reusable transporter object using the default SMTP transport
-//     let transporter = nodemailer.createTransport({
-//       host: "smtp.gmail.com",
-//       port: 587,
-//       secure: false, // true for 465, false for other ports
-//       auth: {
-//         user: "n19dccn107@student.ptithcm.edu.vn", // generated ethereal user
-//         pass: "bqztpfkmmbpzmdxl", // generated ethereal password
-//       },
-//     });
-//     // send mail with defined transport object
-//     let info = await transporter.jsonMail({
-//       from: "n19dccn107@student.ptithcm.edu.vn", // sender address
-//       to: "phammanhbeo2001@gmail.com", // list of receivers
-//       subject: "FORGOT PASSWORD", // Subject line
-//       text: "FORGOT PASSWORD", // plain text body
-//       html: `Mã xác nhận của bạn: ${randomID}`, // html body
-//     });
-//     res.status(200).json("taikhoans/forgotpw", {
-//       message: `Mã xác minh đã được gửi về email: ${taiKhoan[0].email}  vui lòng kiểm tra hòm thư!`,
-//       flag: 1,
-//     });
-//   } else {
-//     res.status(200).json("taikhoans/forgotpw", {
-//       message: `Không tìm thấy username!`,
-//       flag: 0,
-//     });
+//       let transporter = nodemailer.createTransport({
+//         host: "smtp.gmail.com",
+//         port: 587,
+//         secure: false, // true for 465, false for other ports
+//         auth: {
+//           user: "n19dccn107@student.ptithcm.edu.vn", // generated ethereal user
+//           pass: "bqztpfkmmbpzmdxl", // generated ethereal password
+//         },
+//       });
+//       // send mail with defined transport object
+//       let info = await transporter.jsonMail({
+//         from: "n19dccn107@student.ptithcm.edu.vn", // sender address
+//         to: `${account[0].email}`, // list of receivers
+//         subject: "FORGOT PASSWORD", // Subject line
+//         text: "FORGOT PASSWORD", // plain text body
+//         html: `Mã xác nhận của bạn là: ${randomID}`, // html body
+//       });
+//       var s2 = account[0].email
+//       var s1 = s2.substring(0, s2.length - 15)
+//       var s3 = s2.substring(s2.length - 15, s2.length)
+//       var email = s1+s3.replace(/\S/gi, '*');
+//       res.status(200).json({
+//         message: `Mã xác minh đã được gửi về email: ${email} vui lòng kiểm tra hòm thư!`,
+//       });
+//     } else {
+//       res.status(201).json({
+//         message: `Không tìm thấy username!`,
+//       });
+//     }
+//   } catch (error) {
+//     console.log(error);
 //   }
 // };
 
@@ -289,10 +366,10 @@ module.exports = {
   createAccountForCustomer,
   // information,
   // create,
-  updateAccount,
+  changePassword,
   // edit,
   // logout,
-  // forgotPassword,
+  forgotPassword,
   // getforgot,
   // formlogin,
   // vertify,

@@ -14,18 +14,17 @@ module.exports = {
     return queryInterface.bulkInsert("Customers", [
       {
         id_account: 1,
-        name: "TrungDz",
+        name: "Nguyễn Thành Trung",
         email: "n19dccn216@student.ptithcm.edu.vn",
         phone: "0123456789",
-        address: "...",
+        address: "Cầu Xã Tĩnh, Bình Lợi, Huyện Bình Chánh, Thành phố Hồ Chí Minh",
       },
       {
-        // id_customer: 2, // Test thử kh có field này, thì lúc run file seeder nó vẫn tự tăng id theo thứ tự, hay vl thật
         id_account: 4,
-        name: "Manh",
-        email: "n19dccn107@student.ptithcm.edu.vn",
+        name: "Phạm Minh Mạnh",
+        email: "phammanhbeo2001@gmail.com",
         phone: "0631231189",
-        address: "...",
+        address: "Xã Quang Trung, Huyện Thống Nhất, Tỉnh Đồng Nai",
       },
     ]);
   },

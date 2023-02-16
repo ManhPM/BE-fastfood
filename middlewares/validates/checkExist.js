@@ -16,7 +16,7 @@ const checkExistItem = (Model) => {
 
 const checkExistAccount = (Model) => {
   return async (req, res, next) => {
-    const { username } = req;
+    const { username } = req.body;
     const account = await Model.findOne({
       where: {
         username,

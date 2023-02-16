@@ -1,6 +1,6 @@
 const express = require("express");
 const {Account} = require("../models")
-const {login, logout, createAccountForCustomer, updateAccount} = require("../controllers/account.controllers");
+const {login, logout, createAccountForCustomer, changePassword, forgotPassword} = require("../controllers/account.controllers");
 const { checkExistAccount, checkLogin } = require("../middlewares/validates/checkExist");
 const { checkCreateAccount } = require("../middlewares/validates/checkCreate");
 const {authenticate} = require("../middlewares/auth/authenticate.js")
@@ -10,7 +10,8 @@ const accountRouter = express.Router();
 accountRouter.post("/login", checkLogin(Account), login);
 accountRouter.get("/logout", authenticate, logout);
 accountRouter.post("/create", checkCreateAccount(Account), createAccountForCustomer);
-accountRouter.put("/changepassword", authenticate, checkExistAccount(Account), updateAccount);
+accountRouter.post("/forgotpassword", checkExistAccount(Account), forgotPassword);
+accountRouter.put("/changepassword", authenticate, checkExistAccount(Account), changePassword);
 
 // khoRouter.get("/new", authenticate, authorize(["Nhân viên","Quản lý"]), create);
 // khoRouter.get("/", authenticate, authorize(["Nhân viên","Quản lý"]), getAllKho);

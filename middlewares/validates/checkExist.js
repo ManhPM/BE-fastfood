@@ -9,7 +9,7 @@ const checkExistItem = (Model) => {
     if (item) {
       next();
     } else {
-      res.status(404).send({ message: "Không tìm thấy Item!", isSuccess: false });
+      res.status(404).send({ message: "Không tìm thấy Item!" });
     }
   };
 };
@@ -25,7 +25,7 @@ const checkExistAccount = (Model) => {
     if (account) {
       next();
     } else {
-      res.status(404).send({ message: "Không tìm thấy Account!", isSuccess: false });
+      res.status(404).send({ message: "Không tìm thấy Account!" });
     }
   };
 };
@@ -41,7 +41,7 @@ const checkLogin = (Model) => {
     if (account) {
       next();
     } else {
-      res.status(404).send({ message: "Không tìm thấy username!", isSuccess: false});
+      res.status(404).send({ message: "Không tìm thấy username!"});
     }
   };
 };

@@ -59,41 +59,32 @@ const createAccountForCustomer = async (req, res) => {
 
 const login = async (req, res) => {
   const { username, password } = req.body;
-  try {
-    const account = await Account.findOne({
+  const account = await Account.findOne({
+    where: {
+      username,
+    },
+  });
+  const isAuth = bcrypt.compareSync(password, account.password);
+  if (isAuth) {
+    const customer = await Customer.findOne({
       where: {
-        username,
+        id_account: account.id_account,
       },
     });
-    const isAuth = bcrypt.compareSync(password, account.password);
-    if (isAuth) {
-      const expireTime = 30 * 60;
-      const customer = await Customer.findOne({
-        where: {
-          id_account: account.id_account,
-        },
-      });
-      const token = jwt.sign({ username: account.username }, "manhpham2k1", {
-        expiresIn: expireTime,
-      });
-      res
-        .cookie("access_token", token, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-        })
-        .status(200)
-        .json({
-          message: "Đăng nhập thành công!",
-          userInfo: customer,
-          token,
-          expireTime,
-        });
-    } else {
-      res.status(404).json({message: "Sai thông tin đăng nhập!"});
-    }
-  } catch (error) {
-    res.status(500).json(error);
+    const token = jwt.sign({ username: account.username }, "manhpham2k1", {
+      expiresIn: 60 * 30,
+    });
+    res
+      .cookie("access_token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+      })
+      .status(200)
+      .json({message: "Đăng nhập thành công!", token, userInfo: customer, expireTime: 60 * 30});
+  } else {
+    res.status(400).json({message: "Sai thông tin đăng nhập!"});
   }
+
 };
 
 const changePassword = async (req, res) => {

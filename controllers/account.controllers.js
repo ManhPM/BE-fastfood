@@ -91,7 +91,7 @@ const login = async (req, res) => {
           isSuccess: true,
         });
     } else {
-      throw {"message":"Sai thông tin đăng nhập!"}
+      res.status(404).json({message: "Sai thông tin đăng nhập!"});
     }
   } catch (error) {
     res.status(500).json(error);
@@ -110,7 +110,7 @@ const changePassword = async (req, res) => {
     if (isAuth) {
       if (newPassword == repeatPassword) {
         if (newPassword == oldPassword) {
-          res.status(201).json({
+          res.status(400).json({
             message: "Mật khẩu mới không được giống với mật khẩu cũ!",
             isSuccess: false,
           });
@@ -130,13 +130,13 @@ const changePassword = async (req, res) => {
           });
         }
       } else {
-        res.status(201).json({
+        res.status(400).json({
           message: "Mật khẩu lặp lại không đúng!",
           isSuccess: false,
         });
       }
     } else {
-      res.status(201).json({
+      res.status(400).json({
         message: "Mật khẩu không chính xác!",
         isSuccess: false,
       });
@@ -153,7 +153,7 @@ const logout = async (req, res, next) => {
   res
     .clearCookie("access_token")
     .status(200)
-    .json({ message: "Đăng xuất thành công!", isSuccess: true });
+    .json({ message: "Đăng xuất thành công!" });
 };
 
 const forgotPassword = async (req, res) => {
@@ -166,7 +166,7 @@ const forgotPassword = async (req, res) => {
       },
     });
     if (isExist !== null) {
-      res.status(200).json({
+      res.status(400).json({
         message: `Có lỗi xảy ra vui lòng thử lại!`,
         isSuccess: false,
       });

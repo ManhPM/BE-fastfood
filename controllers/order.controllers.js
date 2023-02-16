@@ -73,9 +73,9 @@ const confirmOrder = async (req, res) => {
     });
     order.status = 1;
     await order.save();
-    res.status(201).json({ message: "Xác nhận đơn hàng!", isSuccess: true });
+    res.status(201).json({ message: "Xác nhận đơn hàng!" });
   } catch (error) {
-    res.status(500).json({ message: "Thao tác thất bại!", isSuccess: false });
+    res.status(500).json({ message: "Thao tác thất bại!" });
   }
 };
 
@@ -102,9 +102,9 @@ const deleteOrder = async (req, res) => {
         id_order,
       },
     });
-    res.status(201).json({ message: "Đơn hàng đã được huỷ bỏ!", isSuccess: false });
+    res.status(201).json({ message: "Đơn hàng đã được huỷ bỏ!" });
   } catch (error) {
-    res.status(500).json({ message: "Thao tác thất bại!", isSuccess: false });
+    res.status(500).json({ message: "Thao tác thất bại!" });
   }
 };
 

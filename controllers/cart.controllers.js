@@ -63,12 +63,11 @@ const createItemInCart = async (req, res) => {
             .json({
               message:
                 "Sản phẩm vượt quá số lượng tối đa được phép mua. Tự động lấy số lượng tối đa!",
-              isSuccess: true
             });
         } else {
           isExist.quantity = isExist.quantity + quantity;
           await isExist.save();
-          res.status(201).json({ message: "Đã thêm vào giỏ hàng!", isSuccess: true });
+          res.status(201).json({ message: "Đã thêm vào giỏ hàng!" });
         }
       } else {
         if (isExist.quantity == item.quantity) {
@@ -77,12 +76,11 @@ const createItemInCart = async (req, res) => {
             .json({
               message:
                 "Sản phẩm vượt quá số lượng tối đa được phép mua. Tự động lấy số lượng tối đa!",
-              isSuccess: true
             });
         } else {
           isExist.quantity = isExist.quantity + 1;
           await isExist.save();
-          res.status(201).json({ message: "Đã thêm vào giỏ hàng!", isSuccess: true });
+          res.status(201).json({ message: "Đã thêm vào giỏ hàng!" });
         }
       }
     } else {
@@ -98,7 +96,6 @@ const createItemInCart = async (req, res) => {
             .json({
               message:
                 "Sản phẩm vượt quá số lượng tối đa được phép mua. Tự động lấy số lượng tối đa!",
-              isSuccess: true
             });
         } else {
           await Cart_detail.create({
@@ -106,7 +103,7 @@ const createItemInCart = async (req, res) => {
             id_cart: info[0].id_cart,
             quantity: quantity,
           });
-          res.status(201).json({ message: "Đã thêm vào giỏ hàng!", isSuccess: true });
+          res.status(201).json({ message: "Đã thêm vào giỏ hàng!" });
         }
       } else {
         if (item.quantity >= 1) {
@@ -115,14 +112,14 @@ const createItemInCart = async (req, res) => {
             id_cart: info[0].id_cart,
             quantity: 1,
           });
-          res.status(201).json({ message: "Đã thêm vào giỏ hàng!", isSuccess: true });
+          res.status(201).json({ message: "Đã thêm vào giỏ hàng!" });
         } else {
-          res.status(201).json({ message: "Sản phẩm đã hết hàng!", isSuccess: false });
+          res.status(201).json({ message: "Sản phẩm đã hết hàng!" });
         }
       }
     }
   } catch (error) {
-    res.status(500).json({ message: "Thao tác thất bại!", isSuccess: false });
+    res.status(500).json({ message: "Thao tác thất bại!" });
   }
 };
 
@@ -149,14 +146,14 @@ const increaseNumItemInCart = async (req, res) => {
       },
     });
     if (item.quantity == itemInCart.quantity) {
-      res.status(202).json({ message: "Số lượng có thể đặt đã đạt tối đa!", isSuccess: false });
+      res.status(202).json({ message: "Số lượng có thể đặt đã đạt tối đa!" });
     } else {
       itemInCart.quantity = itemInCart.quantity + 1;
       await itemInCart.save();
       res.status(201).json();
     }
   } catch (error) {
-    res.status(500).json({ message: "Thao tác thất bại!", isSuccess: false });
+    res.status(500).json({ message: "Thao tác thất bại!" });
   }
 };
 
@@ -191,7 +188,7 @@ const decreaseNumItemInCart = async (req, res) => {
       res.status(201).json();
     }
   } catch (error) {
-    res.status(500).json({ message: "Thao tác thất bại!", isSuccess: false });
+    res.status(500).json({ message: "Thao tác thất bại!" });
   }
 };
 
@@ -213,12 +210,12 @@ const deleteOneItemInCart = async (req, res) => {
       },
     });
     if (result) {
-      res.status(201).json({ message: "Đã xoá khỏi giỏ hàng!", isSuccess: true });
+      res.status(201).json({ message: "Đã xoá khỏi giỏ hàng!" });
     } else {
-      res.status(501).json({ message: "Đã có lỗi xảy ra!", isSuccess: false });
+      res.status(400).json({ message: "Đã có lỗi xảy ra!" });
     }
   } catch (error) {
-    res.status(500).json({ message: "Thao tác thất bại!", isSuccess: false });
+    res.status(500).json({ message: "Thao tác thất bại!" });
   }
 };
 
@@ -271,12 +268,12 @@ const order = async (req, res) => {
         });
         i++;
       }
-      res.status(201).json({ message: "Đặt hàng thành công!", isSuccess: true });
+      res.status(201).json({ message: "Đặt hàng thành công!" });
     } else {
-      res.status(202).json({ message: "Giỏ hàng của bạn đang trống!", isSuccess: false });
+      res.status(400).json({ message: "Giỏ hàng của bạn đang trống!" });
     }
   } catch (error) {
-    res.status(500).json({ message: "Đặt hàng thất bại!", isSuccess: false });
+    res.status(500).json({ message: "Đặt hàng thất bại!" });
   }
 };
 

@@ -42,7 +42,7 @@ const getAllItemInOrder = async (req, res) => {
   const { id_order } = req.params;
   try {
     const itemList = await Order.sequelize.query(
-      "SELECT OD.*, I.name, I.price, (I.price*OD.quantity) as amount FROM orders as O, order_details as OD, items as I WHERE O.id_order = OD.id_order AND OD.id_item = I.id_item AND O.id_order = :id_order",
+      "SELECT OD.*, I.image, I.name, I.price, (I.price*OD.quantity) as amount FROM orders as O, order_details as OD, items as I WHERE O.id_order = OD.id_order AND OD.id_item = I.id_item AND O.id_order = :id_order",
       {
         replacements: { id_order: id_order },
         type: QueryTypes.SELECT,

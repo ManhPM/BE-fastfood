@@ -74,13 +74,7 @@ const login = async (req, res) => {
     const token = jwt.sign({ username: account.username }, "manhpham2k1", {
       expiresIn: 60 * 30,
     });
-    res
-      .cookie("access_token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-      })
-      .status(200)
-      .json({message: "Đăng nhập thành công!", token, userInfo: customer, expireTime: 60 * 30});
+    res.status(200).json({message: "Đăng nhập thành công!", token, userInfo: customer, expireTime: 60 * 30});
   } else {
     res.status(400).json({message: "Sai thông tin đăng nhập!"});
   }
@@ -134,8 +128,8 @@ const changePassword = async (req, res) => {
 };
 
 const logout = async (req, res, next) => {
+  res.removeHeader('access_token');
   res
-    .clearCookie("access_token")
     .status(200)
     .json({ message: "Đăng xuất thành công!" });
 };

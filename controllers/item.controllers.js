@@ -28,7 +28,7 @@ const getAllItem = async (req, res) => {
                         type: QueryTypes.SELECT,
                         raw: true
                     });
-                    res.status(200).json({totalPage: count[0].totalPage, currentPage: page + 1, itemList})
+                    res.status(200).json({totalPage: count[0].totalPage, currentPage: Number(page) + 1, itemList})
                 }
                 else if(typesort == 2){
                     const itemList = await Item.sequelize.query(
@@ -38,7 +38,7 @@ const getAllItem = async (req, res) => {
                         type: QueryTypes.SELECT,
                         raw: true
                     });
-                    res.status(200).json({totalPage: count[0].totalPage, currentPage: page + 1, itemList})
+                    res.status(200).json({totalPage: count[0].totalPage, currentPage: Number(page) + 1, itemList})
                 }
                 else {
                     const itemList = await Item.sequelize.query(
@@ -48,7 +48,7 @@ const getAllItem = async (req, res) => {
                         type: QueryTypes.SELECT,
                         raw: true
                     });
-                    res.status(200).json({totalPage: count[0].totalPage, currentPage: page + 1, itemList})
+                    res.status(200).json({totalPage: count[0].totalPage, currentPage: Number(page) + 1, itemList})
                 }
                 
             }
@@ -68,7 +68,7 @@ const getAllItem = async (req, res) => {
                         type: QueryTypes.SELECT,
                         raw: true
                     });
-                    res.status(200).json({totalPage: count[0].totalPage, currentPage: page + 1, itemList})
+                    res.status(200).json({totalPage: count[0].totalPage, currentPage: Number(page) + 1, itemList})
                 }
                 else if(typesort == 2){
                     const itemList = await Item.sequelize.query(
@@ -78,7 +78,7 @@ const getAllItem = async (req, res) => {
                         type: QueryTypes.SELECT,
                         raw: true
                     });
-                    res.status(200).json({totalPage: count[0].totalPage, currentPage: page + 1, itemList})
+                    res.status(200).json({totalPage: count[0].totalPage, currentPage: Number(page) + 1, itemList})
                 }
                 else {
                     const itemList = await Item.sequelize.query(
@@ -88,7 +88,7 @@ const getAllItem = async (req, res) => {
                         type: QueryTypes.SELECT,
                         raw: true
                     });
-                    res.status(200).json({totalPage: count[0].totalPage, currentPage: page + 1, itemList})
+                    res.status(200).json({totalPage: count[0].totalPage, currentPage: Number(page) + 1, itemList})
                 }
                 
             }
@@ -110,7 +110,7 @@ const getAllItem = async (req, res) => {
                         type: QueryTypes.SELECT,
                         raw: true
                     });
-                    res.status(200).json({totalPage: count[0].totalPage, currentPage: page + 1, itemList})
+                    res.status(200).json({totalPage: count[0].totalPage, currentPage: Number(page) + 1, itemList})
                 }
                 else if(typesort == 2){
                     const itemList = await Item.sequelize.query(
@@ -120,7 +120,7 @@ const getAllItem = async (req, res) => {
                         type: QueryTypes.SELECT,
                         raw: true
                     });
-                    res.status(200).json({totalPage: count[0].totalPage, currentPage: page + 1, itemList})
+                    res.status(200).json({totalPage: count[0].totalPage, currentPage: Number(page) + 1, itemList})
                 }
                 else {
                     const itemList = await Item.sequelize.query(
@@ -130,7 +130,7 @@ const getAllItem = async (req, res) => {
                         type: QueryTypes.SELECT,
                         raw: true
                     });
-                    res.status(200).json({totalPage: count[0].totalPage, currentPage: page + 1, itemList})
+                    res.status(200).json({totalPage: count[0].totalPage, currentPage: Number(page) + 1, itemList})
                 }
             }
             else {
@@ -149,7 +149,7 @@ const getAllItem = async (req, res) => {
                         type: QueryTypes.SELECT,
                         raw: true
                     });
-                    res.status(200).json({totalPage: count[0].totalPage, currentPage: page + 1, itemList})
+                    res.status(200).json({totalPage: count[0].totalPage, currentPage: Number(page) + 1, itemList})
                 }
                 else if(typesort == 2){//gia giam dan
                     const itemList = await Item.sequelize.query(
@@ -159,7 +159,7 @@ const getAllItem = async (req, res) => {
                         type: QueryTypes.SELECT,
                         raw: true
                     });
-                    res.status(200).json({totalPage: count[0].totalPage, currentPage: page + 1, itemList})
+                    res.status(200).json({totalPage: count[0].totalPage, currentPage: Number(page) + 1, itemList})
                 }
                 else{//gia tang dan
                     const itemList = await Item.sequelize.query(
@@ -169,7 +169,7 @@ const getAllItem = async (req, res) => {
                         type: QueryTypes.SELECT,
                         raw: true
                     });
-                    res.status(200).json({totalPage: count[0].totalPage, currentPage: page + 1, itemList})
+                    res.status(200).json({totalPage: count[0].totalPage, currentPage: Number(page) + 1, itemList})
                 }
             }
         }

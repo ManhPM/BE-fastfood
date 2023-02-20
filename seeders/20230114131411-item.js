@@ -137,7 +137,8 @@ module.exports = {
       },
       {
         id_type: 2,
-        image: "https://demo2.pavothemes.com/poco/product/iced-tea/",
+        image:
+          "https://demo2.pavothemes.com/poco/wp-content/uploads/2020/08/24-1.png?fbclid=IwAR0hvlZAKKCdRND77o0BTU1Q8QuIK5bWoGaQWO6xljdXdrT22kCju1iqO3o",
         name: "Trà chanh",
         price: 30000,
         description: "Giải khát",
@@ -236,29 +237,7 @@ module.exports = {
       {
         id_type: 3,
         image:
-          "https://demo2.pavothemes.com/poco/wp-content/uploads/2020/08/11-1.png",
-        name: "Bánh Muffin chocolate",
-        price: 15000,
-        description: "Vị ngon cuốn hút",
-        energy: 50,
-        ingredient: "Bánh, sữa, trứng, chocolate,...",
-        quantity: 70,
-      },
-      {
-        id_type: 3,
-        image:
           "https://demo2.pavothemes.com/poco/wp-content/uploads/2020/08/31-1.png",
-        name: "Cupcake chocolate",
-        price: 15000,
-        description: "Vị ngon cuốn hút",
-        energy: 50,
-        ingredient: "Bánh, sữa, trứng, chocolate,...",
-        quantity: 70,
-      },
-      {
-        id_type: 3,
-        image:
-          "https://demo2.pavothemes.com/poco/wp-content/uploads/2020/08/11-1.png",
         name: "Cupcake chocolate mâm xôi",
         price: 15000,
         description: "Vị ngon cuốn hút",
@@ -300,14 +279,14 @@ module.exports = {
         quantity: 70,
       },
       {
-        id_type: 3,
+        id_type: 4,
         image:
           "https://demo2.pavothemes.com/poco/wp-content/uploads/2020/08/30-1.png",
-        name: "Kem tô",
+        name: "Mì sợi sốt cay",
         price: 15000,
-        description: "Vị ngon mát lạnh",
+        description: "Vị ngon cay cay, the the cái miệng",
         energy: 50,
-        ingredient: "Kem ký,...",
+        ingredient: "Mì, sốt cay, nạo dừa,...",
         quantity: 70,
       },
       {

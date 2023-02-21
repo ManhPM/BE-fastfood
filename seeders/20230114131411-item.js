@@ -137,7 +137,8 @@ module.exports = {
       },
       {
         id_type: 2,
-        image: "https://demo2.pavothemes.com/poco/product/iced-tea/",
+        image:
+          "https://demo2.pavothemes.com/poco/wp-content/uploads/2020/08/24-1.png",
         name: "Trà chanh",
         price: 30000,
         description: "Giải khát",
@@ -150,7 +151,7 @@ module.exports = {
         image:
           "https://demo2.pavothemes.com/poco/wp-content/uploads/2020/08/27-1.png",
         name: "Nước ép Kiwi",
-        price: 4000,
+        price: 25000,
         description: "Dinh dưỡng và giải khát",
         energy: 50,
         ingredient: "Kiwi tươi,...",
@@ -161,7 +162,7 @@ module.exports = {
         image:
           "https://demo2.pavothemes.com/poco/wp-content/uploads/2020/08/21-1.png",
         name: "Hot Cappuccino",
-        price: 4000,
+        price: 18000,
         description: "Giải khát",
         energy: 50,
         ingredient: "Cà phê,...",
@@ -170,12 +171,12 @@ module.exports = {
       {
         id_type: 2,
         image:
-          "https://demo2.pavothemes.com/poco/wp-content/uploads/2020/08/23-1.png",
-        name: "Cà phê đá",
-        price: 4000,
+          "https://demo2.pavothemes.com/poco/wp-content/uploads/2020/08/4-1.png",
+        name: "Cà phê Macchiato",
+        price: 25000,
         description: "Giải khát",
         energy: 50,
-        ingredient: "Cà phê,...",
+        ingredient: "Cà phê, sữa",
         quantity: 70,
       },
       {
@@ -183,7 +184,7 @@ module.exports = {
         image:
           "https://demo2.pavothemes.com/poco/wp-content/uploads/2020/08/28-1.png",
         name: "Nước chanh bạc hà",
-        price: 4000,
+        price: 20000,
         description: "Giải khát",
         energy: 50,
         ingredient: "Chanh, siro bạc hà,...",
@@ -193,11 +194,11 @@ module.exports = {
         id_type: 2,
         image:
           "https://demo2.pavothemes.com/poco/wp-content/uploads/2020/08/23-1.png",
-        name: "Cà phê đen",
-        price: 4000,
+        name: "Ca cao kem",
+        price: 15000,
         description: "Giải khát",
         energy: 50,
-        ingredient: "Cà phê",
+        ingredient: "90% cacao, 10% kem",
         quantity: 70,
       },
       {
@@ -205,7 +206,7 @@ module.exports = {
         image:
           "https://demo2.pavothemes.com/poco/wp-content/uploads/2020/08/38-1.png",
         name: "Cà phê Pizzaro ",
-        price: 4000,
+        price: 18000,
         description: "Giải khát",
         energy: 50,
         ingredient: "Cà phê",
@@ -362,7 +363,6 @@ module.exports = {
         description: "Nóng, giòn",
         energy: 25,
         price: 15000,
-        energy: 25,
         ingredient: "Pizza, mực, tôm, cá, cà rốt, khoai tây,...",
         quantity: 40,
       },
@@ -374,7 +374,6 @@ module.exports = {
         description: "Nóng, giòn",
         energy: 25,
         price: 15000,
-        energy: 25,
         ingredient: "Pizza, rau củ quả,...",
         quantity: 40,
       },
@@ -386,10 +385,75 @@ module.exports = {
         description: "Nóng, giòn",
         energy: 25,
         price: 15000,
-        energy: 25,
         ingredient: "Bánh mì, thịt heo quay, pate,...",
         quantity: 40,
       },
+      {
+        id_type: 2,
+        image:
+          "https://demo2.pavothemes.com/poco/wp-content/uploads/2020/08/25-1.png",
+        name: "Snapple Cam",
+        price: 15000,
+        description: "Thức uống mang về, tràn đầy năng lượng",
+        energy: 50,
+        ingredient: "50% cam, 40% trà, 10% phụ gia",
+        quantity: 20,
+      },
+      {
+        id_type: 2,
+        image:
+          "https://demo2.pavothemes.com/poco/wp-content/uploads/2020/08/39-1.png",
+        name: "Hồng đào",
+        price: 20000,
+        description: "Giải khát giữa mùa hè nóng nực",
+        energy: 60,
+        ingredient: "Hồng đào nguyên chất",
+        quantity: 30,
+      },
+      {
+        id_type: 2,
+        image:
+          "https://demo2.pavothemes.com/poco/wp-content/uploads/2020/08/45-1.png",
+        name: "Sinh tố dâu",
+        price: 25000,
+        description: "Giải khát giữa mùa hè nóng nực",
+        energy: 60,
+        ingredient: "Dâu Đà Lạt, chanh",
+        quantity: 30,
+      },
+      {
+        id_type: 2,
+        image:
+          "https://demo2.pavothemes.com/poco/wp-content/uploads/2020/08/46-1.png",
+        name: "Nước ép cherry",
+        price: 25000,
+        description: "Giải khát giữa mùa hè nóng nực",
+        energy: 60,
+        ingredient: "Cherry, trà, chanh",
+        quantity: 20,
+      },
+      {
+        id_type: 2,
+        image:
+          "https://demo2.pavothemes.com/poco/wp-content/uploads/2020/08/50-1.png",
+        name: "Trio coffee",
+        price: 30000,
+        description: "Cà phê nguyên chất cùng topping ken sữa",
+        energy: 80,
+        ingredient: "Cà phê, sữa",
+        quantity: 20,
+      },
+      {
+        id_type: 2,
+        image:
+          "https://demo2.pavothemes.com/poco/wp-content/uploads/2020/08/52-1.png",
+        name: "Cam sành nhiệt đới",
+        price: 28000,
+        description: "Giải khát cùng nước ép cam sành từ Tây Nguyên",
+        energy: 50,
+        ingredient: "Cam, chanh",
+        quantity: 40,
+      }
     ]);
   },
 

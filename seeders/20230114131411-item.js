@@ -138,7 +138,7 @@ module.exports = {
       {
         id_type: 2,
         image:
-          "https://demo2.pavothemes.com/poco/wp-content/uploads/2020/08/24-1.png?fbclid=IwAR0hvlZAKKCdRND77o0BTU1Q8QuIK5bWoGaQWO6xljdXdrT22kCju1iqO3o",
+          "https://demo2.pavothemes.com/poco/wp-content/uploads/2020/08/24-1.png",
         name: "Trà chanh",
         price: 30000,
         description: "Giải khát",

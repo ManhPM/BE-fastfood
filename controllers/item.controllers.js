@@ -2,12 +2,12 @@ const { Item } = require("../models");
 const { QueryTypes } = require('sequelize');
 
 const getAllItem = async (req, res) => {
-    const { name } = req.query;
-    const { id_type } = req.body;
-    let { typesort } = req.body;
+    const { name, id_type } = req.query;
+    let { typesort } = req.query;
     if(!typesort){
         typesort = 1;
     }
+    console.log(name)
     const perPage = 12;
     const page = req.params.page || 1;
     try {

@@ -7,14 +7,13 @@ const getAllItem = async (req, res) => {
     if(!typesort){
         typesort = 1;
     }
-    console.log(name)
     const perPage = 12;
     const page = req.params.page || 1;
     try {
         if(name){
             if(id_type){
                 const count = await Item.sequelize.query(
-                    "SELECT CEILING((COUNT(I.id_item)/(:perPage))) as totalPage FROM items as I, types as T WHERE T.id_type = I.id_type AND T.id_type = :id_type AND I.name COLLATE UTF8_GENERAL_CI LIKE :name", 
+                    "SELECT COUNT(I.id_item) as totalPage FROM items as I, types as T WHERE T.id_type = I.id_type AND T.id_type = :id_type AND I.name COLLATE UTF8_GENERAL_CI LIKE :name", 
                 { 
                     replacements: { name: `%${name}%`, perPage: perPage, id_type: id_type },
                     type: QueryTypes.SELECT,
@@ -28,7 +27,7 @@ const getAllItem = async (req, res) => {
                         type: QueryTypes.SELECT,
                         raw: true
                     });
-                    res.status(200).json({totalPage: count[0].totalPage, itemList})
+                    res.status(200).json({totalItems: count[0].totalPage, itemList})
                 }
                 else if(typesort == 2){
                     const itemList = await Item.sequelize.query(
@@ -38,7 +37,7 @@ const getAllItem = async (req, res) => {
                         type: QueryTypes.SELECT,
                         raw: true
                     });
-                    res.status(200).json({totalPage: count[0].totalPage, itemList})
+                    res.status(200).json({totalItems: count[0].totalPage, itemList})
                 }
                 else {
                     const itemList = await Item.sequelize.query(
@@ -48,13 +47,13 @@ const getAllItem = async (req, res) => {
                         type: QueryTypes.SELECT,
                         raw: true
                     });
-                    res.status(200).json({totalPage: count[0].totalPage, itemList})
+                    res.status(200).json({totalItems: count[0].totalPage, itemList})
                 }
                 
             }
             else {
                 const count = await Item.sequelize.query(
-                    "SELECT CEILING((COUNT(I.id_item)/(:perPage))) as totalPage FROM items as I, types as T WHERE T.id_type = I.id_type AND I.name COLLATE UTF8_GENERAL_CI LIKE :name", 
+                    "SELECT COUNT(I.id_item) as totalPage FROM items as I, types as T WHERE T.id_type = I.id_type AND I.name COLLATE UTF8_GENERAL_CI LIKE :name", 
                 { 
                     replacements: { name: `%${name}%`, perPage: perPage },
                     type: QueryTypes.SELECT,
@@ -68,7 +67,7 @@ const getAllItem = async (req, res) => {
                         type: QueryTypes.SELECT,
                         raw: true
                     });
-                    res.status(200).json({totalPage: count[0].totalPage, itemList})
+                    res.status(200).json({totalItems: count[0].totalPage, itemList})
                 }
                 else if(typesort == 2){
                     const itemList = await Item.sequelize.query(
@@ -78,7 +77,7 @@ const getAllItem = async (req, res) => {
                         type: QueryTypes.SELECT,
                         raw: true
                     });
-                    res.status(200).json({totalPage: count[0].totalPage, itemList})
+                    res.status(200).json({totalItems: count[0].totalPage, itemList})
                 }
                 else {
                     const itemList = await Item.sequelize.query(
@@ -88,7 +87,7 @@ const getAllItem = async (req, res) => {
                         type: QueryTypes.SELECT,
                         raw: true
                     });
-                    res.status(200).json({totalPage: count[0].totalPage, itemList})
+                    res.status(200).json({totalItems: count[0].totalPage, itemList})
                 }
                 
             }
@@ -96,7 +95,7 @@ const getAllItem = async (req, res) => {
         else {
             if(id_type){
                 const count = await Item.sequelize.query(
-                    "SELECT CEILING((COUNT(I.id_item)/(:perPage))) as totalPage FROM items as I, types as T WHERE T.id_type = I.id_type AND T.id_type = :id_type", 
+                    "SELECT COUNT(I.id_item) as totalPage FROM items as I, types as T WHERE T.id_type = I.id_type AND T.id_type = :id_type", 
                 { 
                     replacements: { perPage: perPage, id_type: id_type },
                     type: QueryTypes.SELECT,
@@ -110,7 +109,7 @@ const getAllItem = async (req, res) => {
                         type: QueryTypes.SELECT,
                         raw: true
                     });
-                    res.status(200).json({totalPage: count[0].totalPage, itemList})
+                    res.status(200).json({totalItems: count[0].totalPage, itemList})
                 }
                 else if(typesort == 2){
                     const itemList = await Item.sequelize.query(
@@ -120,7 +119,7 @@ const getAllItem = async (req, res) => {
                         type: QueryTypes.SELECT,
                         raw: true
                     });
-                    res.status(200).json({totalPage: count[0].totalPage, itemList})
+                    res.status(200).json({totalItems: count[0].totalPage, itemList})
                 }
                 else {
                     const itemList = await Item.sequelize.query(
@@ -130,12 +129,12 @@ const getAllItem = async (req, res) => {
                         type: QueryTypes.SELECT,
                         raw: true
                     });
-                    res.status(200).json({totalPage: count[0].totalPage, itemList})
+                    res.status(200).json({totalItems: count[0].totalPage, itemList})
                 }
             }
             else {
                 const count = await Item.sequelize.query(
-                    "SELECT CEILING((COUNT(I.id_item)/(:perPage))) AS totalPage FROM items as I, types as T WHERE T.id_type = I.id_type", 
+                    "SELECT COUNT(I.id_item) AS totalPage FROM items as I, types as T WHERE T.id_type = I.id_type", 
                 { 
                     replacements: { perPage: perPage },
                     type: QueryTypes.SELECT,
@@ -149,7 +148,7 @@ const getAllItem = async (req, res) => {
                         type: QueryTypes.SELECT,
                         raw: true
                     });
-                    res.status(200).json({totalPage: count[0].totalPage, itemList})
+                    res.status(200).json({totalItems: count[0].totalPage, itemList})
                 }
                 else if(typesort == 2){//gia giam dan
                     const itemList = await Item.sequelize.query(
@@ -159,7 +158,7 @@ const getAllItem = async (req, res) => {
                         type: QueryTypes.SELECT,
                         raw: true
                     });
-                    res.status(200).json({totalPage: count[0].totalPage, itemList})
+                    res.status(200).json({totalItems: count[0].totalPage, itemList})
                 }
                 else{//gia tang dan
                     const itemList = await Item.sequelize.query(
@@ -169,7 +168,7 @@ const getAllItem = async (req, res) => {
                         type: QueryTypes.SELECT,
                         raw: true
                     });
-                    res.status(200).json({totalPage: count[0].totalPage, itemList})
+                    res.status(200).json({totalItems: count[0].totalPage, itemList})
                 }
             }
         }
@@ -182,7 +181,7 @@ const getDetailItem = async (req, res) => {
     const { id_item } = req.params
     try {
         const item = await Item.sequelize.query(
-            "SELECT I.*, T.name as name_type FROM items AS I, types as T WHERE T.id_type = I.id_type AND I.id_item = :id_item", 
+            "SELECT I.*, T.name as name_type, (SELECT ROUND(AVG(R.rating) * 2, 0) / 2 FROM reviews AS R WHERE R.id_item = :id_item) as rating FROM items AS I, types as T WHERE T.id_type = I.id_type AND I.id_item = :id_item", 
         { 
             replacements: { id_item: id_item},
             type: QueryTypes.SELECT,

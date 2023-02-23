@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 
 const authenticate = (req, res, next) => {
     const token = req.headers.access_token;
+    console.log(token)
     if (!token) {
         return res.status(403).json({message: "Vui lòng đăng nhập!" });
       }
@@ -10,7 +11,7 @@ const authenticate = (req, res, next) => {
         req.username = data.username;
         return next();
       } catch {
-        return res.status(403).json({message: "Đã có lỗi xảy ra!" });
+        return res.status(403).json({message: "Vui lòng đăng nhập!" });
       }
 }
 

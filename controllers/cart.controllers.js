@@ -18,14 +18,14 @@ const getAllItemInCart = async (req, res) => {
       }
     );
     const itemList = await Item.sequelize.query(
-      "SELECT CD.*, I.image, I.name, I.price, (I.price*CD.quantity) as amount FROM carts as C, cart_details as CD, items as I, accounts as A, customers as CU WHERE A.id_account = CU.id_account AND CU.id_customer = C.id_customer AND C.id_cart = CD.id_cart AND CD.id_item = I.id_item AND A.username = :username",
+      "SELECT CD.id_item, CD.id_cart, CD.quantity as amount, I.image, I.name, I.price, I.quantity FROM carts as C, cart_details as CD, items as I, accounts as A, customers as CU WHERE A.id_account = CU.id_account AND CU.id_customer = C.id_customer AND C.id_cart = CD.id_cart AND CD.id_item = I.id_item AND A.username = :username",
       {
         replacements: { username: `${req.username}` },
         type: QueryTypes.SELECT,
         raw: true,
       }
     );
-    res.status(200).json({itemList, total: info[0].total});
+    res.status(200).json({itemList});
   } catch (error) {
     res.status(500).json(error);
   }

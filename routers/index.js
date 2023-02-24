@@ -6,6 +6,7 @@ const { orderRouter } = require("./order.routers");
 const { wishlistRouter } = require("./wishlist.routers");
 const { typeRouter } = require("./type.routers");
 const { paymentRouter } = require("./payment.routers");
+const { reviewRouter } = require("./review.routers");
 const rootRouter = express.Router();
 
 rootRouter.use("/items", itemRouter);
@@ -15,6 +16,7 @@ rootRouter.use("/orders", orderRouter);
 rootRouter.use("/wishlist", wishlistRouter);
 rootRouter.use("/types", typeRouter);
 rootRouter.use("/payment_methods", paymentRouter);
+rootRouter.use("/reviews", reviewRouter);
 
 module.exports = {
     rootRouter,

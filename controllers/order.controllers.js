@@ -21,7 +21,7 @@ const getAllOrder = async (req, res) => {
         }
       );
       const orderList = await Order.sequelize.query(
-        "SELECT O.*, P.name FROM orders as O, payments as P WHERE P.id_payment = O.id_payment AND O.id_customer = :id_customer",
+        "SELECT O.id_order, O.description, O.status, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, P.name as name_payment FROM orders as O, payments as P WHERE P.id_payment = O.id_payment AND O.id_customer = :id_customer",
         {
           replacements: { id_customer: customer[0].id_customer },
           type: QueryTypes.SELECT,

@@ -57,6 +57,34 @@ const createAccountForCustomer = async (req, res) => {
   }
 };
 
+const loginAdmin = async (req, res) => {
+  const { username, password } = req.body;
+  const account = await Account.findOne({
+    where: {
+      username,
+    },
+  });
+  if (account.id_role != 2) {
+    res.status(400).json({ message: "Tài khoản không có quyền truy cập!" });
+  } else {
+    const isAuth = bcrypt.compareSync(password, account.password);
+    if (isAuth) {
+      const token = jwt.sign({ username: account.username }, "manhpham2k1", {
+        expiresIn: 6 * 60 * 60,
+      });
+      res
+        .status(200)
+        .json({
+          message: "Đăng nhập thành công!",
+          token,
+          expireTime: 6 * 60 * 60,
+        });
+    } else {
+      res.status(400).json({ message: "Sai thông tin đăng nhập!" });
+    }
+  }
+};
+
 const login = async (req, res) => {
   const { username, password } = req.body;
   const account = await Account.findOne({
@@ -74,11 +102,17 @@ const login = async (req, res) => {
     const token = jwt.sign({ username: account.username }, "manhpham2k1", {
       expiresIn: 60 * 30,
     });
-    res.status(200).json({message: "Đăng nhập thành công!", token, userInfo: customer, expireTime: 60 * 30});
+    res
+      .status(200)
+      .json({
+        message: "Đăng nhập thành công!",
+        token,
+        userInfo: customer,
+        expireTime: 60 * 30,
+      });
   } else {
-    res.status(400).json({message: "Sai thông tin đăng nhập!"});
+    res.status(400).json({ message: "Sai thông tin đăng nhập!" });
   }
-
 };
 
 const changePassword = async (req, res) => {
@@ -128,10 +162,8 @@ const changePassword = async (req, res) => {
 };
 
 const logout = async (req, res, next) => {
-  res.removeHeader('access_token');
-  res
-    .status(200)
-    .json({ message: "Đăng xuất thành công!" });
+  res.removeHeader("access_token");
+  res.status(200).json({ message: "Đăng xuất thành công!" });
 };
 
 const forgotPassword = async (req, res) => {
@@ -183,7 +215,7 @@ const forgotPassword = async (req, res) => {
         subject: "FORGOT PASSWORD", // Subject line
         text: "FORGOT PASSWORD", // plain text body
         html: `Mã xác nhận của bạn là: ${randomID}`, // html body
-      })
+      });
       var s2 = account[0].email;
       var s1 = s2.substring(0, s2.length - 15);
       var s3 = s2.substring(s2.length - 15, s2.length);
@@ -338,6 +370,7 @@ const forgotPassword = async (req, res) => {
 module.exports = {
   // getDetailTaiKhoan,
   login,
+  loginAdmin,
   logout,
   createAccountForCustomer,
   // information,

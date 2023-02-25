@@ -16,9 +16,6 @@ module.exports = {
         name: "Khách hàng",
       },
       {
-        name: "Nhân viên",
-      },
-      {
         name: "Admin",
       },
     ]);

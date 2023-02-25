@@ -32,16 +32,6 @@ module.exports = {
         address: "Đồng Nai",
         description: "ADMIN",
       },
-      {
-        id_account: 5,
-        name: "Tuấn",
-        gender: "Nam",
-        birthday: "2001-01-21",
-        email: "abcdefg@gmail.com",
-        phone: "0846123123",
-        address: "Đồng Nai",
-        description: "Nhân viên Tuấn",
-      },
     ]);
   },
 

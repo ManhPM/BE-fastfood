@@ -55,19 +55,24 @@ const createItemInCart = async (req, res) => {
     });
     if (isExist) {
       if (quantity) {
-        if (quantity + isExist.quantity > item.quantity) {
-          isExist.quantity = item.quantity;
-          await isExist.save();
-          res
-            .status(201)
-            .json({
-              message:
-                "Sản phẩm vượt quá số lượng tối đa được phép mua. Tự động lấy số lượng tối đa!",
-            });
-        } else {
-          isExist.quantity = isExist.quantity + quantity;
-          await isExist.save();
-          res.status(201).json({ message: "Đã thêm vào giỏ hàng!" });
+        if(quantity <= 0){
+          res.status(400).json({ message: "Số lượng phải lớn hơn 0!" });
+        }
+        else {
+          if (quantity + isExist.quantity > item.quantity) {
+            isExist.quantity = item.quantity;
+            await isExist.save();
+            res
+              .status(201)
+              .json({
+                message:
+                  "Sản phẩm vượt quá số lượng tối đa được phép mua. Tự động lấy số lượng tối đa!",
+              });
+          } else {
+            isExist.quantity = isExist.quantity + quantity;
+            await isExist.save();
+            res.status(201).json({ message: "Đã thêm vào giỏ hàng!" });
+          }
         }
       } else {
         if (isExist.quantity == item.quantity) {
@@ -120,6 +125,46 @@ const createItemInCart = async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ message: "Thao tác thất bại!" });
+  }
+};
+
+const updateItemInCart = async (req, res) => {
+  const { id_item } = req.params;
+  const { quantity } = req.body
+  try {
+    const info = await Cart.sequelize.query(
+      "SELECT C.* FROM carts as C, customers as CU, accounts as A WHERE A.username = :username AND CU.id_account = A.id_account AND CU.id_customer = C.id_customer",
+      {
+        replacements: { username: `${req.username}` },
+        type: QueryTypes.SELECT,
+        raw: true,
+      }
+    );
+    const itemInCart = await Cart_detail.findOne({
+      where: {
+        id_item,
+        id_cart: info[0].id_cart,
+      },
+    });
+    const item = await Item.findOne({
+      where: {
+        id_item,
+      },
+    });
+    if(quantity <= 0){
+      res.status(400).json({ message: "Số lượng phải lớn hơn 0!" });
+    }
+    else {
+      if (item.quantity < quantity) {
+        res.status(400).json({ message: "Số lượng vượt quá tồn. Tự động lấy số lượng tối đa!" });
+      } else {
+        itemInCart.quantity = quantity;
+        await itemInCart.save();
+        res.status(201).json({ message: "Điều chỉnh số lượng thành công!" });
+      }
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Điều chỉnh số lượng thất bại!" });
   }
 };
 
@@ -279,6 +324,7 @@ const order = async (req, res) => {
 
 module.exports = {
   getAllItemInCart,
+  updateItemInCart,
   createItemInCart,
   increaseNumItemInCart,
   decreaseNumItemInCart,

@@ -1,6 +1,39 @@
 const { Item } = require("../models");
 const { QueryTypes } = require('sequelize');
 
+const createItem = async (req, res) => {
+    
+}
+
+const updateItem = async (req, res) => {
+    const { id_item } = req.params
+    const { id_type ,image, name, price, description, energy, ingredient, quantity } = req.body
+    try {
+        const itemUpdate = await Item.findOne({
+            where:{
+                id_item
+            }
+        })
+        if(quantity > 0){
+            itemUpdate.quantity = quantity
+            itemUpdate.energy = energy
+            itemUpdate.ingredient = ingredient
+            itemUpdate.id_type = id_type
+            itemUpdate.description = description
+            itemUpdate.name = name
+            itemUpdate.image = image 
+            itemUpdate.price = price
+            await itemUpdate.save();
+            res.status(201).json({message: "Cập nhật sản phẩm thành công!"})
+        }
+        else {
+            res.status(400).json({message: "Số lượng sản phẩm phải lớn hơn 0!"})
+        }
+    } catch (error) {
+        res.status(400).json({message: "Số lượng sản phẩm phải lớn hơn 0!"})
+    }
+}
+
 const getAllItem = async (req, res) => {
     const { name, id_type } = req.query;
     let { typesort } = req.query;
@@ -195,5 +228,6 @@ const getDetailItem = async (req, res) => {
 
 module.exports = {
     getAllItem,
-    getDetailItem
+    getDetailItem,
+    updateItem
 };

@@ -71,46 +71,64 @@ const confirmOrder = async (req, res) => {
         id_order,
       },
     });
-    order.status = 1;
-    await order.save();
-    res.status(201).json({ message: "Xác nhận đơn hàng!" });
-  } catch (error) {
-    res.status(500).json({ message: "Thao tác thất bại!" });
-  }
-};
-
-const deleteOrder = async (req, res) => {
-  const { id_order } = req.params;
-  try {
-    let i = 0;
-    const order_detailList = await Order_detail.findAll({
-      where: {
-        id_order,
-      },
-    });
-    while (order_detailList[i]) {
-      await Order_detail.destroy({
+    if(order.status != 1){
+      const itemListInOrder = await Order_detail.findAll({
         where: {
-          id_order: order_detailList[i].id_order,
-          id_item: order_detailList[i].id_item,
+          id_order,
         },
       });
-      i++;
+      let i = 0;
+      while (itemListInOrder[i]) {
+        const updateQuantity = await Item.findOne({
+          where: {
+            id_item: itemListInOrder[i].id_item,
+          },
+        });
+        if(updateQuantity.quantity >= itemListInOrder[i].quantity){
+          updateQuantity.quantity =
+          updateQuantity.quantity - itemListInOrder[i].quantity;
+          await updateQuantity.save();
+          i++;
+        }
+        else {
+          res.status(400).json({ message: "Số lượng hàng còn lại không đủ. Tự động huỷ đơn!" });
+        }
+      }
+      order.status = 1;
+      await order.save();
+      res.status(201).json({ message: "Xác nhận đơn hàng!" });
     }
-    await Order.destroy({
-      where: {
-        id_order,
-      },
-    });
-    res.status(201).json({ message: "Đơn hàng đã được huỷ bỏ!" });
+    else {
+      res.status(400).json({ message: "Thao tác thất bại. Đơn hàng đã được xác nhận!" });
+    }
   } catch (error) {
     res.status(500).json({ message: "Thao tác thất bại!" });
   }
 };
 
+const cancelOrder = async (req, res) => {
+  const { id_order } = req.params;
+  try {
+    const order = await Order.findOne({
+      where: {
+        id_order,
+      },
+    });
+    if(order.status != 2){
+      order.status = 2;
+      await order.save();
+      res.status(400).json({ message: "Thao tác thất bại. Đơn hàng đã được huỷ bỏ!" });
+    }
+    else {
+      res.status(201).json({ message: "Đơn hàng đã được huỷ bỏ!" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Thao tác thất bại!" });
+  }
+};
 module.exports = {
   getAllOrder,
   getAllItemInOrder,
   confirmOrder,
-  deleteOrder,
+  cancelOrder,
 };

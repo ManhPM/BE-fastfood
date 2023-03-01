@@ -1,13 +1,13 @@
 const express = require("express");
 const {authenticate} = require("../middlewares/auth/authenticate.js")
 const {authorize} = require("../middlewares/auth/authorize.js");
-const { getAllItemInOrder, getAllOrder, confirmOrder, deleteOrder } = require("../controllers/order.controllers");
+const { getAllItemInOrder, getAllOrder, confirmOrder, cancelOrder } = require("../controllers/order.controllers");
 const orderRouter = express.Router();
 
-orderRouter.get("/", authenticate, authorize(["Khách hàng"]), getAllOrder);
-orderRouter.get("/:id_order", authenticate, authorize(["Khách hàng"]), getAllItemInOrder);
-orderRouter.post("/:id_order", authenticate, authorize(["Khách hàng"]), confirmOrder);
-orderRouter.delete("/:id_order", authenticate, authorize(["Khách hàng"]), deleteOrder);
+orderRouter.get("/", authenticate, authorize(["Khách hàng","Admin"]), getAllOrder);
+orderRouter.get("/:id_order", authenticate, authorize(["Khách hàng","Admin"]), getAllItemInOrder);
+orderRouter.get("/confirm/:id_order", authenticate, authorize(["Admin"]), confirmOrder);
+orderRouter.get("/cancel/:id_order", authenticate, authorize(["Admin"]), cancelOrder);
 
 
 module.exports = {

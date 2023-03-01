@@ -297,14 +297,6 @@ const order = async (req, res) => {
           id_item: itemInCartList[i].id_item,
           quantity: itemInCartList[i].quantity,
         });
-        const updateQuantity = await Item.findOne({
-          where: {
-            id_item: itemInCartList[i].id_item,
-          },
-        });
-        updateQuantity.quantity =
-          updateQuantity.quantity - itemInCartList[i].quantity;
-        await updateQuantity.save();
         await Cart_detail.destroy({
           where: {
             id_item: itemInCartList[i].id_item,

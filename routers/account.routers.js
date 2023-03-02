@@ -8,19 +8,12 @@ const {authorize} = require("../middlewares/auth/authorize.js")
 const accountRouter = express.Router();
 
 accountRouter.post("/login", checkExistAccount(Account), login);
-accountRouter.post("/admin/login", checkExistAccount(Account), loginAdmin);
+accountRouter.post("/admin/login", checkExistAccount(Account), authorize(["Admin"]), loginAdmin);
 accountRouter.get("/logout", authenticate, logout);
 accountRouter.post("/create", checkCreateAccount(Account), createAccountForCustomer);
 accountRouter.post("/forgotpassword", checkExistAccount(Account), forgotPassword);
 accountRouter.put("/changepassword", authenticate, checkExistAccount(Account), changePassword);
 
-// khoRouter.get("/new", authenticate, authorize(["Nhân viên","Quản lý"]), create);
-// khoRouter.get("/", authenticate, authorize(["Nhân viên","Quản lý"]), getAllKho);
-// khoRouter.get("/:maKho/edit", authenticate, authorize(["Nhân viên","Quản lý"]), edit);
-// khoRouter.get("/:maKho", authenticate, authorize(["Nhân viên","Quản lý"]), getDetailKho);
-// khoRouter.post("/create", authenticate, authorize(["Nhân viên","Quản lý"]), checkCreateKho(Kho), createKho);
-// khoRouter.put("/:maKho", authenticate, authorize(["Nhân viên","Quản lý"]), checkExistKho(Kho), updateType);
-// khoRouter.delete("/:maKho", authenticate, authorize(["Nhân viên","Quản lý"]), checkExistKho(Kho), deleteKho);
 module.exports = {
     accountRouter,
 }

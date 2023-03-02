@@ -1,5 +1,5 @@
 const { Item, Order, Order_detail } = require("../models");
-const { QueryTypes } = require("sequelize");
+const { QueryTypes, and } = require("sequelize");
 
 const getAllOrder = async (req, res) => {
   try {
@@ -21,7 +21,7 @@ const getAllOrder = async (req, res) => {
         }
       );
       const orderList = await Order.sequelize.query(
-        "SELECT O.id_order, O.description, O.status, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, P.name as name_payment FROM orders as O, payments as P WHERE P.id_payment = O.id_payment AND O.id_customer = :id_customer",
+        "SELECT O.id_order, O.description, O.status, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, P.name as name_payment FROM orders as O, payments as P WHERE P.id_payment = O.id_payment AND O.id_customer = :id_customer ORDER BY datetime DESC, status ASC",
         {
           replacements: { id_customer: customer[0].id_customer },
           type: QueryTypes.SELECT,
@@ -30,7 +30,13 @@ const getAllOrder = async (req, res) => {
       );
       res.status(200).json(orderList);
     } else {
-      const orderList = await Order.findAll({});
+      const orderList = await Order.sequelize.query(
+        "SELECT O.id_order, O.description, O.status, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, P.name as name_payment FROM orders as O, payments as P WHERE P.id_payment = O.id_payment ORDER BY status ASC, datetime DESC",
+        {
+          type: QueryTypes.SELECT,
+          raw: true,
+        }
+      );
       res.status(200).json(orderList);
     }
   } catch (error) {
@@ -126,9 +132,43 @@ const cancelOrder = async (req, res) => {
     res.status(500).json({ message: "Thao tác thất bại!" });
   }
 };
+
+const thongKe = async (req, res) => {
+  const { tuNgay, denNgay } = req.query
+  try {
+    if(tuNgay && denNgay){
+      // Thống kê từ ngày tuNgay đến ngày denNgay
+      const thongKe = await Order_detail.sequelize.query(
+        "SELECT I.*, SUM(OD.quantity) as sold, SUM(OD.quantity*I.price) as total FROM order_details as OD, orders as O, items as I WHERE I.id_item = OD.id_item AND O.id_order = OD.id_order AND O.status = 1 AND O.datetime BETWEEN :tuNgay AND :denNgay GROUP BY OD.id_item",
+        {
+          replacements: { tuNgay, denNgay },
+          type: QueryTypes.SELECT,
+          raw: true,
+        }
+      );
+      res.status(200).json(thongKe)
+    }
+    else {
+      // Thống kê từ trước đến nay
+      const thongKe = await Order_detail.sequelize.query(
+        "SELECT I.*, SUM(OD.quantity) as sold, SUM(OD.quantity*I.price) as total FROM order_details as OD, orders as O, items as I WHERE I.id_item = OD.id_item AND O.id_order = OD.id_order AND O.status = 1 GROUP BY OD.id_item",
+        {
+          type: QueryTypes.SELECT,
+          raw: true,
+        }
+      );
+      res.status(200).json(thongKe)
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Đã có lỗi xảy ra!" });
+  }
+};
+
+
 module.exports = {
   getAllOrder,
   getAllItemInOrder,
   confirmOrder,
   cancelOrder,
+  thongKe,
 };

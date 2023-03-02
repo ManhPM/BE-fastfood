@@ -60,6 +60,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      status: { type: DataTypes.INTEGER, allowNull: false },
     },
     {
       sequelize,

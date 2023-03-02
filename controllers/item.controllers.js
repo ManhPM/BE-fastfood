@@ -2,12 +2,33 @@ const { Item } = require("../models");
 const { QueryTypes } = require('sequelize');
 
 const createItem = async (req, res) => {
-    
+    const { id_type ,image, name, price, description, energy, ingredient, quantity } = req.body
+    try {
+        if(quantity > 0){
+            await Item.create({
+                id_type ,
+                image, 
+                name, 
+                price, 
+                description, 
+                energy, 
+                ingredient, 
+                quantity,
+                status: 1
+            })
+            res.status(201).json({message: "Tạo mới sản phẩm thành công!"})
+        }
+        else {
+            res.status(400).json({message: "Số lượng phải lớn hơn 0!"})
+        }
+    } catch (error) {
+        res.status(500).json({message: "Đã có lỗi xảy ra!"})
+    }
 }
 
 const updateItem = async (req, res) => {
     const { id_item } = req.params
-    const { id_type ,image, name, price, description, energy, ingredient, quantity } = req.body
+    const { id_type , image, name, price, description, energy, ingredient, quantity, status } = req.body
     try {
         const itemUpdate = await Item.findOne({
             where:{
@@ -23,6 +44,7 @@ const updateItem = async (req, res) => {
             itemUpdate.name = name
             itemUpdate.image = image 
             itemUpdate.price = price
+            itemUpdate.status = status
             await itemUpdate.save();
             res.status(201).json({message: "Cập nhật sản phẩm thành công!"})
         }
@@ -30,7 +52,23 @@ const updateItem = async (req, res) => {
             res.status(400).json({message: "Số lượng sản phẩm phải lớn hơn 0!"})
         }
     } catch (error) {
-        res.status(400).json({message: "Số lượng sản phẩm phải lớn hơn 0!"})
+        res.status(500).json({message: "Đã có lỗi xảy ra!"})
+    }
+}
+
+const deleteItem = async (req, res) => {
+    const { id_item } = req.params
+    try {
+        const itemUpdate = await Item.findOne({
+            where:{
+                id_item
+            }
+        })
+        itemUpdate.status = 0
+        await itemUpdate.save();
+        res.status(200).json({message: "Xoá sản phẩm thành công!"})
+    } catch (error) {
+        res.status(500).json({message: "Đã có lỗi xảy ra!"})
     }
 }
 
@@ -229,5 +267,7 @@ const getDetailItem = async (req, res) => {
 module.exports = {
     getAllItem,
     getDetailItem,
-    updateItem
+    createItem,
+    updateItem,
+    deleteItem
 };

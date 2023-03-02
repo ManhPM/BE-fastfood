@@ -9,7 +9,7 @@ const checkExistItem = (Model) => {
     if (item) {
       next();
     } else {
-      res.status(404).send({ message: "Không tìm thấy Item!" });
+      res.status(404).send({ message: "Không tìm thấy sản phẩm!" });
     }
   };
 };
@@ -25,29 +25,13 @@ const checkExistAccount = (Model) => {
     if (account) {
       next();
     } else {
-      res.status(404).send({ message: "Không tìm thấy Account!" });
+      res.status(404).send({ message: "Không tìm thấy tài khoản!" });
     }
   };
 };
 
-const checkLogin = (Model) => {
-  return async (req, res, next) => {
-    const { username } = req.body;
-    const account = await Model.findOne({
-      where: {
-        username,
-      },
-    });
-    if (account) {
-      next();
-    } else {
-      res.status(404).send({ message: "Không tìm thấy username!"});
-    }
-  };
-};
 
 module.exports = {
   checkExistItem,
   checkExistAccount,
-  checkLogin
 };

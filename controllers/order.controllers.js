@@ -21,7 +21,7 @@ const getAllOrder = async (req, res) => {
         }
       );
       const orderList = await Order.sequelize.query(
-        "SELECT O.id_order, O.description, O.status, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, P.name as name_payment, (SELECT COUNT(id_item) FROM order_details WHERE isReviewed = 0 AND id_order = O.id_order) as count FROM orders as O, payments as P WHERE P.id_payment = O.id_payment AND O.id_customer = :id_customer ORDER BY datetime DESC, status ASC",
+        "SELECT O.id_order, O.description, O.status, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, P.name as name_payment, (SELECT COUNT(id_item) FROM order_details WHERE isReviewed = 0 AND id_order = O.id_order) as reviewingCount FROM orders as O, payments as P WHERE P.id_payment = O.id_payment AND O.id_customer = :id_customer ORDER BY datetime DESC, status ASC",
         {
           replacements: { id_customer: customer[0].id_customer },
           type: QueryTypes.SELECT,
@@ -56,14 +56,14 @@ const getAllItemInOrder = async (req, res) => {
       }
     );
     const info = await Order.sequelize.query(
-      "SELECT SUM((I.price*OD.quantity)) as total, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, O.status FROM orders as O, order_details as OD, items as I WHERE O.id_order = OD.id_order AND OD.id_item = I.id_item AND O.id_order = :id_order",
+      "SELECT SUM((I.price*OD.quantity)) as total, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, O.status, P.name as name_payment FROM payments as P, orders as O, order_details as OD, items as I WHERE O.id_order = OD.id_order AND OD.id_item = I.id_item AND P.id_payment = O.id_payment AND O.id_order = :id_order",
       {
         replacements: { id_order: id_order },
         type: QueryTypes.SELECT,
         raw: true,
       }
     );
-    res.status(200).json({total: info[0].total, datetime: info[0].datetime, status: info[0].status, itemList});
+    res.status(200).json({total: info[0].total, datetime: info[0].datetime, status: info[0].status, name_payment: info[0].name_payment, itemList});
   } catch (error) {
     res.status(500).json(error);
   }

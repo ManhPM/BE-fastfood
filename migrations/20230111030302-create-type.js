@@ -12,6 +12,11 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
       },
+      status: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        defaultValue: 1,
+      }
     });
   },
   async down(queryInterface, Sequelize) {

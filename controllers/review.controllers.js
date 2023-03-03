@@ -12,19 +12,37 @@ const getAllReviewByItem = async (req, res) => {
   const { id_item } = req.params;
   //console.log(id_item);
   try {
-    const review = await sequelize.query(
-      "SELECT Cus.name, Rev.rating , Rev.comment, DATE_FORMAT(Rev.datetime, '%d/%m/%Y %H:%i') as datetime FROM reviews as Rev, customers as Cus  Where id_item= :id_item AND Rev.id_customer = Cus.id_customer",
+    const reviews = await sequelize.query(
+      "SELECT Cus.name, Rev.rating , Rev.comment, DATE_FORMAT(Rev.datetime, '%d/%m/%Y %H:%i') as datetime FROM reviews as Rev, customers as Cus  Where id_item= :id_item AND Rev.id_customer = Cus.id_customer ORDER BY datetime DESC",
       {
         replacements: { id_item: id_item },
         type: QueryTypes.SELECT,
       }
     );
-
-    res.status(200).json(review);
+    res.status(200).json(reviews);
   } catch (error) {
     res.status(500).json(error);
   }
 };
+
+const get4LastestReviewsByItem = async (req, res) => {
+  const { id_item } = req.params;
+  //console.log(id_item);
+  try {
+    const reviews = await sequelize.query(
+      "SELECT R.id_item, R.rating, R.comment, DATE_FORMAT(R.datetime, '%d/%m/%Y %H:%i') as datetime, C.name as name_customer FROM reviews as R, customers as C WHERE R.id_customer = C.id_customer AND R.id_item = :id_item ORDER BY datetime DESC LIMIT 4",
+      {
+        replacements: { id_item: id_item },
+        type: QueryTypes.SELECT,
+      }
+    );
+    res.status(200).json(reviews);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+
 
 const createReviewByItem = async (req, res) => {
   const { id_item } = req.params;
@@ -97,4 +115,5 @@ const createReviewByItem = async (req, res) => {
 module.exports = {
   getAllReviewByItem,
   createReviewByItem,
+  get4LastestReviewsByItem,
 };

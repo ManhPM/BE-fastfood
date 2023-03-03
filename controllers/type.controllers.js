@@ -16,6 +16,7 @@ const getAllType = async (req, res) => {
   }
 };
 
+
 module.exports = {
     getAllType,
 };

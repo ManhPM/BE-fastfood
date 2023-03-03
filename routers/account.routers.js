@@ -8,7 +8,7 @@ const {authorize} = require("../middlewares/auth/authorize.js")
 const accountRouter = express.Router();
 
 accountRouter.post("/login", checkExistAccount(Account), login);
-accountRouter.post("/admin/login", checkExistAccount(Account), authorize(["Admin"]), loginAdmin);
+accountRouter.post("/admin/login", checkExistAccount(Account), loginAdmin);
 accountRouter.get("/logout", authenticate, logout);
 accountRouter.post("/create", checkCreateAccount(Account), createAccountForCustomer);
 accountRouter.post("/forgotpassword", checkExistAccount(Account), forgotPassword);

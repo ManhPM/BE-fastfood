@@ -21,7 +21,7 @@ const getAllOrder = async (req, res) => {
         }
       );
       const orderList = await Order.sequelize.query(
-        "SELECT O.id_order, O.description, O.status, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, P.name as name_payment, (SELECT COUNT(id_item) FROM order_details WHERE isReviewed = 0 AND id_order = O.id_order) as reviewingCount FROM orders as O, payments as P WHERE P.id_payment = O.id_payment AND O.id_customer = :id_customer ORDER BY datetime DESC, status ASC",
+        "SELECT O.id_order, O.description, O.status, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, (SELECT COUNT(id_item) FROM order_details WHERE isReviewed = 0 AND id_order = O.id_order) as reviewingCount FROM orders as O WHERE O.id_customer = :id_customer ORDER BY datetime DESC, status ASC",
         {
           replacements: { id_customer: customer[0].id_customer },
           type: QueryTypes.SELECT,
@@ -31,7 +31,7 @@ const getAllOrder = async (req, res) => {
       res.status(200).json(orderList);
     } else {
       const orderList = await Order.sequelize.query(
-        "SELECT O.id_order, O.description, O.status, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, P.name as name_payment FROM orders as O, payments as P WHERE P.id_payment = O.id_payment ORDER BY status ASC, datetime DESC",
+        "SELECT O.id_order, O.description, O.status, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime FROM orders as O ORDER BY status ASC, datetime DESC",
         {
           type: QueryTypes.SELECT,
           raw: true,

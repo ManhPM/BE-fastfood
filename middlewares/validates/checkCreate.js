@@ -9,7 +9,7 @@ const checkCreateAccount = (Model) => {
     if (!account) {
       next();
     } else {
-      res.status(404).send({ message: "Tài khoản đã tồn tại!" });
+      res.status(404).json({ message: "Tài khoản đã tồn tại!" });
     }
   };
 };
@@ -27,44 +27,35 @@ const checkCreateItem = (Model) => {
     if (!item) {
       next();
     } else {
-      res.status(404).send({ message: "Sản phẩm đã tồn tại!" });
+      res.status(404).json({ message: "Sản phẩm đã tồn tại!" });
     }
   };
 };
 
-const checkCreateItemValue = (Model) => {
+const checkItemValue = (Model) => {
   return async (req, res, next) => {
     const { quantity, price, energy } = req.body;
     if(quantity > 0){
-
       if(price > 0){
         if(energy > 0){
-
-        }
-      }
-    }
-    else {
-      if(price > 0){
-        if(energy > 0){
-
+          next();
         }
         else {
-          
+          res.status(400).json({ message: "Năng lượng phải lớn hơn 0!" });
         }
       }
       else {
-
+        res.status(400).json({ message: "Giá phải lớn hơn 0!" });
       }
     }
-    if (!item) {
-      next();
-    } else {
-      res.status(404).send({ message: "Sản phẩm đã tồn tại!" });
+    else {
+      res.status(400).json({ message: "Số lượng phải lớn hơn 0!" });
     }
   };
 };
 
 module.exports = {
   checkCreateAccount,
-  checkCreateItem
+  checkCreateItem,
+  checkItemValue
 };

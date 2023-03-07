@@ -7,7 +7,7 @@ const orderRouter = express.Router();
 orderRouter.get("/", authenticate, authorize(["Khách hàng","Admin"]), getAllOrder);
 orderRouter.get("/detail/:id_order", authenticate, authorize(["Khách hàng","Admin"]), getAllItemInOrder);
 orderRouter.get("/confirm/:id_order", authenticate, authorize(["Admin"]), confirmOrder);
-orderRouter.get("/cancel/:id_order", authenticate, authorize(["Admin"]), cancelOrder);
+orderRouter.get("/cancel/:id_order", authenticate, authorize(["Admin","Khách hàng"]), cancelOrder);
 orderRouter.get("/thongke", authenticate, authorize(["Admin"]), thongKe);
 
 

@@ -46,71 +46,50 @@ const get4LastestReviewsByItem = async (req, res) => {
 
 const createReviewByItem = async (req, res) => {
   const { id_item } = req.params;
+  const { id_order } = req.query
   const { rating, comment } = req.body;
   try {
-    const id_accountQuery = await sequelize.query(
-      "SELECT id_account FROM accounts as Acc WHERE Acc.username = :username",
-      {
-        replacements: { username: `${req.username}` },
-        type: QueryTypes.SELECT,
-      }
-    );
-    // Tim customer
-    const id_customerQuery = await sequelize.query(
-      "SELECT id_customer FROM customers WHERE id_account = :id_account",
-      {
-        replacements: { id_account: id_accountQuery[0].id_account },
-        type: QueryTypes.SELECT,
-      }
-    );
-    //const id_customer = 2;
-    const checkItemInSevenDays = await sequelize.query(
-      "SELECT OrdOfCus.id_order, id_item,  datediff(now(), OrdOfCus.datetime) as thoiGianDat FROM order_details as Ord_det, (SELECT id_order,datetime FROM orders as Ord WHERE Ord.id_customer = :id_customer)  as OrdOfCus WHERE Ord_det.id_order = OrdOfCus.id_order AND Ord_det.id_item = :id_item AND Ord_det.isReviewed != 1 HAVING thoiGianDat < 7",
+    // kiem tra xem co < 7 ngay khong
+    // lay id_customer
+    const check7day = await sequelize.query(
+      "SELECT O.id_customer, datediff(O.datetime, curdate()) as count FROM orders as O WHERE O.id_order = :id_order",
       {
         replacements: {
-          id_customer: id_customerQuery[0].id_customer,
-          id_item: id_item,
+          id_order: id_order,
         },
         type: QueryTypes.SELECT,
       }
     );
-    if (checkItemInSevenDays.length != 0) {
-      //Kiem tra xem no co Review san pham nay chua
-      // do sth
-
-      //Tao comment
+     if(check7day[0].count <= 7){
       const datetime = new Date();
       datetime.setHours(datetime.getHours() + 7);
       await Review.create({
         id_item,
-        id_customer: id_customerQuery[0].id_customer,
+        id_customer: check7day[0].id_customer,
         comment,
         datetime: datetime,
         rating,
       });
-
-      //Cap nhat trang thai da Review san pham nay` roi`
-      //const order_detail=Order_detail.findOne({ where: {id_oder: checkItemInSevenDays[0].id_order}});
       await Order_detail.update(
         { isReviewed: 1 },
         {
           where: {
             isReviewed: 0,
-            id_order: checkItemInSevenDays[0].id_order,
-            id_item: checkItemInSevenDays[0].id_item,
+            id_order,
+            id_item,
           },
         }
       );
-      //await Order_detail.save();
       res.status(200).json({ message: "Đánh giá thành công!" });
-    } else {
-      res.status(404).json({ message: "Bạn không còn lượt đánh giá!" });
-    }
+     }
+     else {
+      res.status(400).json({ message: "Đánh giá thất bại. Đơn bạn đặt đã vượt quá 7 ngày!" });
+     }
   } catch (error) {
-    res.status(500).json(error);
+    res.status(500).json({ message: "Đã có lỗi xảy ra!" });
   }
 
-  // Kiểm tra đã từng đặt món này chưa
+
 };
 module.exports = {
   getAllReviewByItem,

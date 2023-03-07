@@ -21,7 +21,7 @@ const getAllOrder = async (req, res) => {
         }
       );
       const orderList = await Order.sequelize.query(
-        "SELECT O.id_order, O.description, O.status, O.datetime, (SELECT COUNT(id_item) FROM order_details WHERE isReviewed = 0 AND id_order = O.id_order) as reviewingCount FROM orders as O WHERE O.id_customer = :id_customer ORDER BY O.datetime DESC, O.status ASC",
+        "SELECT O.id_order, O.description, O.status, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, (SELECT COUNT(id_item) FROM order_details WHERE isReviewed = 0 AND id_order = O.id_order) as reviewingCount FROM orders as O WHERE O.id_customer = :id_customer ORDER BY O.id_order DESC, O.status ASC",
         {
           replacements: { id_customer: customer[0].id_customer },
           type: QueryTypes.SELECT,
@@ -31,7 +31,7 @@ const getAllOrder = async (req, res) => {
       res.status(200).json(orderList);
     } else {
       const orderList = await Order.sequelize.query(
-        "SELECT O.id_order, C.name as name_customer, O.description, O.status, O.datetime, (SELECT SUM(OD.quantity*I.price) FROM items as I, order_details as OD WHERE OD.id_item = I.id_item AND OD.id_order = O.id_order) as total FROM orders as O, customers as C WHERE O.id_customer = C.id_customer ORDER BY O.status ASC, O.datetime DESC",
+          "SELECT O.id_order, C.name as name_customer, O.description, O.status, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, (SELECT SUM(OD.quantity*I.price) FROM items as I, order_details as OD WHERE OD.id_item = I.id_item AND OD.id_order = O.id_order) as total, P.name as name_payment FROM orders as O, customers as C, payments as P WHERE O.id_customer = C.id_customer AND O.id_payment = P.id_payment ORDER BY O.status ASC, O.id_order DESC",
         {
           type: QueryTypes.SELECT,
           raw: true,
@@ -97,6 +97,8 @@ const confirmOrder = async (req, res) => {
           i++;
         }
         else {
+          order.status = 2;
+          await order.save();
           res.status(400).json({ message: "Số lượng hàng còn lại không đủ. Tự động huỷ đơn!" });
         }
       }
@@ -123,10 +125,10 @@ const cancelOrder = async (req, res) => {
     if(order.status != 2){
       order.status = 2;
       await order.save();
-      res.status(400).json({ message: "Thao tác thất bại. Đơn hàng đã được huỷ bỏ!" });
+      res.status(400).json({ message: "Đơn hàng đã được huỷ bỏ!" });
     }
     else {
-      res.status(201).json({ message: "Đơn hàng đã được huỷ bỏ!" });
+      res.status(201).json({ message: "Thao tác thất bại. Đơn hàng đã được huỷ bỏ!" });
     }
   } catch (error) {
     res.status(500).json({ message: "Thao tác thất bại!" });

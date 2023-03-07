@@ -264,7 +264,7 @@ const deleteOneItemInCart = async (req, res) => {
   }
 };
 
-const order = async (req, res) => {
+const checkout = async (req, res) => {
   const { id_payment, description } = req.body;
   try {
     const info = await Cart.sequelize.query(
@@ -296,6 +296,7 @@ const order = async (req, res) => {
           id_order: newOrder.id_order,
           id_item: itemInCartList[i].id_item,
           quantity: itemInCartList[i].quantity,
+          isReviewed: 0,
         });
         await Cart_detail.destroy({
           where: {
@@ -321,5 +322,5 @@ module.exports = {
   increaseNumItemInCart,
   decreaseNumItemInCart,
   deleteOneItemInCart,
-  order,
+  checkout,
 };

@@ -4,7 +4,7 @@ const { QueryTypes } = require("sequelize");
 const createType = async (req, res) => {
   const { name } = req.body
   try {
-      await Type.create({ name })
+      await Type.create({ name, status: 1 })
       res.status(201).json({message: "Tạo mới  thành công!"})
   } catch (error) {
       res.status(500).json({message: "Đã có lỗi xảy ra!"})

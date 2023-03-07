@@ -32,6 +32,38 @@ const checkCreateItem = (Model) => {
   };
 };
 
+const checkCreateItemValue = (Model) => {
+  return async (req, res, next) => {
+    const { quantity, price, energy } = req.body;
+    if(quantity > 0){
+
+      if(price > 0){
+        if(energy > 0){
+
+        }
+      }
+    }
+    else {
+      if(price > 0){
+        if(energy > 0){
+
+        }
+        else {
+          
+        }
+      }
+      else {
+
+      }
+    }
+    if (!item) {
+      next();
+    } else {
+      res.status(404).send({ message: "Sản phẩm đã tồn tại!" });
+    }
+  };
+};
+
 module.exports = {
   checkCreateAccount,
   checkCreateItem

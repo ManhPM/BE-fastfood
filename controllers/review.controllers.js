@@ -55,7 +55,6 @@ const createReviewByItem = async (req, res) => {
         type: QueryTypes.SELECT,
       }
     );
-    console.log(check7day)
      if(check7day[0].count <= 7){
       const datetime = new Date();
       datetime.setHours(datetime.getHours() + 7);

@@ -54,14 +54,26 @@ const updateItem = async (req, res) => {
 const deleteItem = async (req, res) => {
     const { id_item } = req.params
     try {
-        const itemUpdate = await Item.findOne({
-            where:{
-                id_item
-            }
-        })
-        itemUpdate.status = 0
-        await itemUpdate.save();
-        res.status(200).json({message: "Xoá sản phẩm thành công!"})
+        const check = await Item.sequelize.query(
+            "SELECT COUNT(O.id_order) as count FROM orders as O, order_details as OD, items as I WHERE I.id_item = OD.id_item AND OD.id_order = O.id_order AND I.id_item = :id_item AND O.status = 0", 
+        { 
+            replacements: { id_item: id_item },
+            type: QueryTypes.SELECT,
+            raw: true
+        });
+        if(check[0].count == 0){
+            const itemUpdate = await Item.findOne({
+                where:{
+                    id_item
+                }
+            })
+            itemUpdate.status = 0
+            await itemUpdate.save();
+            res.status(200).json({message: "Xoá sản phẩm thành công!"})
+        }
+        else {
+            res.status(400).json({message: "Xoá sản phẩm thất bại. Sản phẩm đang có hoá đơn chưa xác nhận!"})
+        }
     } catch (error) {
         res.status(500).json({message: "Đã có lỗi xảy ra!"})
     }

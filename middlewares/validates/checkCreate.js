@@ -9,7 +9,7 @@ const checkCreateAccount = (Model) => {
     if (!account) {
       next();
     } else {
-      res.status(404).json({ message: "Tài khoản đã tồn tại!" });
+      res.status(400).json({ message: "Tài khoản đã tồn tại!" });
     }
   };
 };
@@ -27,7 +27,7 @@ const checkCreateItem = (Model) => {
     if (!item) {
       next();
     } else {
-      res.status(404).json({ message: "Sản phẩm đã tồn tại!" });
+      res.status(400).json({ message: "Sản phẩm đã tồn tại!" });
     }
   };
 };
@@ -44,7 +44,7 @@ const checkCreateReview = (Model) => {
       next();
     } else {
       res
-        .status(404)
+        .status(400)
         .json({ message: "Đơn hàng đã bị huỷ hoặc chưa được xác nhận. Không thể đánh giá!" });
     }
   };

@@ -169,7 +169,7 @@ const logout = async (req, res, next) => {
 const forgotPassword = async (req, res) => {
   const { username } = req.body;
   try {
-    const randomID = Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
+    const randomID = Math.floor(Math.random() * (999999 - 100000 + 1) + 100000);
     const isExist = await Account.findOne({
       where: {
         forgot: randomID,
@@ -311,8 +311,7 @@ const verify = async (req, res, next) => {
 };
 
 const accessForgotPassword = async (req, res, next) => {
-  const { username } = req.body;
-  const { password, repeatPassword } = req.body;
+  const { username, password, repeatPassword } = req.body;
   if (password != repeatPassword) {
     res.status(400).json({
       message: `Mật khẩu lặp lại không chính xác!`,
@@ -333,7 +332,7 @@ const accessForgotPassword = async (req, res, next) => {
         accountUpdate.active = 1;
       }
       await accountUpdate.save();
-      res.status(400).json({
+      res.status(200).json({
         message: `Lấy lại mật khẩu thành công!`,
       });
     } catch (error) {

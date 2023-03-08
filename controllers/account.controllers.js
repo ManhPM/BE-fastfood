@@ -288,11 +288,11 @@ const forgotPassword = async (req, res) => {
 //   }
 // };
 
-const vertify = async (req, res, next) => {
-  const { vertifyID, username } = req.body;
+const verify = async (req, res, next) => {
+  const { verifyID, username } = req.body;
   const account = await Account.findOne({
     where: {
-      forgot: vertifyID,
+      forgot: verifyID,
       username
     },
     raw: true,
@@ -303,7 +303,7 @@ const vertify = async (req, res, next) => {
       isSuccess: true
     });
   } else {
-    res.status(200).json({
+    res.status(400).json({
       message: `Mã xác nhận không chính xác!`,
       isSuccess: false
     });
@@ -314,7 +314,7 @@ const vertify = async (req, res, next) => {
 //   const { username } = req.params;
 //   const { password, repeatPassword } = req.body;
 //   if (password != repeatPassword) {
-//     res.status(200).json("taikhoans/vertifypw", {
+//     res.status(200).json("taikhoans/verifypw", {
 //       message: "Mật khẩu không khớp!",
 //     });
 //   } else {
@@ -383,6 +383,6 @@ module.exports = {
   forgotPassword,
   // getforgot,
   // formlogin,
-  // vertify,
+  verify,
   // accessForgotPassword,
 };

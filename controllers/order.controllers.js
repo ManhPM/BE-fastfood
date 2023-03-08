@@ -31,7 +31,7 @@ const getAllOrder = async (req, res) => {
       res.status(200).json(orderList);
     } else {
       const orderList = await Order.sequelize.query(
-          "SELECT O.id_order, C.name as name_customer, O.description, O.status, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, (SELECT SUM(OD.quantity*I.price) FROM items as I, order_details as OD WHERE OD.id_item = I.id_item AND OD.id_order = O.id_order) as total, P.name as name_payment FROM orders as O, customers as C, payments as P WHERE O.id_customer = C.id_customer AND O.id_payment = P.id_payment ORDER BY O.status ASC, O.id_order DESC",
+          "SELECT O.id_order, C.name as name_customer, C.phone, O.description, O.status, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, (SELECT SUM(OD.quantity*I.price) FROM items as I, order_details as OD WHERE OD.id_item = I.id_item AND OD.id_order = O.id_order) as total, P.name as name_payment FROM orders as O, customers as C, payments as P WHERE O.id_customer = C.id_customer AND O.id_payment = P.id_payment ORDER BY O.status ASC, O.id_order DESC",
         {
           type: QueryTypes.SELECT,
           raw: true,

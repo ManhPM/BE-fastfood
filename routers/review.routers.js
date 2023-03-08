@@ -10,7 +10,7 @@ const {
 const { checkCreateReview } = require("../middlewares/validates/checkCreate.js");
 
 reviewRouter.get("/:id_item", getAllReviewByItem); //*
-reviewRouter.get("/detail/get4", get4LastestReviewsByItem); //*
+reviewRouter.get("/detail/get", get4LastestReviewsByItem); //*
 reviewRouter.post("/:id_item", checkCreateReview(Order), authenticate, createReviewByItem); //*
 
 module.exports = {

@@ -310,48 +310,40 @@ const verify = async (req, res, next) => {
   }
 };
 
-// const accessForgotPassword = async (req, res, next) => {
-//   const { username } = req.params;
-//   const { password, repeatPassword } = req.body;
-//   if (password != repeatPassword) {
-//     res.status(200).json("taikhoans/verifypw", {
-//       message: "Mật khẩu không khớp!",
-//     });
-//   } else {
-//     const salt = bcrypt.genSaltSync(10);
-//     //mã hoá salt + password
-//     const hashPassword = bcrypt.hashSync(password, salt);
-//     try {
-//       const accountUpdate = await Account.findOne({
-//         where: {
-//           username,
-//         },
-//       });
-//       accountUpdate.password = hashPassword;
-//       accountUpdate.forgot = 0;
-//       if (accountUpdate.active == 0) {
-//         accountUpdate.active = 1;
-//       }
-//       await accountUpdate.save();
-//       res.status(200).json("taikhoans/formlogin", {
-//         message: "Lấy lại mật khẩu thành công!",
-//       });
-//     } catch (error) {
-//       res.status(500).json("taikhoans/notification", {
-//         message: "Thao tác thất bại!",
-//       });
-//     }
-//   }
-// };
+const accessForgotPassword = async (req, res, next) => {
+  const { username } = req.body;
+  const { password, repeatPassword } = req.body;
+  if (password != repeatPassword) {
+    res.status(400).json({
+      message: `Mật khẩu lặp lại không chính xác!`,
+    });
+  } else {
+    const salt = bcrypt.genSaltSync(10);
+    //mã hoá salt + password
+    const hashPassword = bcrypt.hashSync(password, salt);
+    try {
+      const accountUpdate = await Account.findOne({
+        where: {
+          username,
+        },
+      });
+      accountUpdate.password = hashPassword;
+      accountUpdate.forgot = 0;
+      if (accountUpdate.active == 0) {
+        accountUpdate.active = 1;
+      }
+      await accountUpdate.save();
+      res.status(400).json({
+        message: `Lấy lại mật khẩu thành công!`,
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: `Lấy lại mật khẩu thất bại!`,
+      });
+    }
+  }
+};
 
-// const getforgot = async (req, res, next) => {
-//   res.status(200).json("taikhoans/forgotpw", {
-//     step: 0,
-//   });
-// };
-// const formlogin = async (req, res, next) => {
-//   res.status(200).json("taikhoans/formlogin");
-// };
 
 // const information = async (req, res) => {
 //   const { username } = req;
@@ -384,5 +376,5 @@ module.exports = {
   // getforgot,
   // formlogin,
   verify,
-  // accessForgotPassword,
+  accessForgotPassword,
 };

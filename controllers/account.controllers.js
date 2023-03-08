@@ -209,7 +209,7 @@ const forgotPassword = async (req, res) => {
         },
       });
       // send mail with defined transport object
-      let info = await transporter.sendMail({
+      await transporter.sendMail({
         from: "n19dccn107@student.ptithcm.edu.vn", // sender address
         to: `${account[0].email}`, // list of receivers
         subject: "FORGOT PASSWORD", // Subject line
@@ -288,25 +288,27 @@ const forgotPassword = async (req, res) => {
 //   }
 // };
 
-// const vertify = async (req, res, next) => {
-//   const { vertifyID } = req.body;
-//   const taiKhoan = await Account.findOne({
-//     where: {
-//       forgot: vertifyID,
-//     },
-//     raw: true,
-//   });
-//   if (taiKhoan) {
-//     res.status(200).json("taikhoans/vertifypw", {
-//       username: Account.username,
-//     });
-//   } else {
-//     res.status(200).json("taikhoans/forgotpw", {
-//       message: `Mã xác nhận không chính xác!`,
-//       flag: 1,
-//     });
-//   }
-// };
+const vertify = async (req, res, next) => {
+  const { vertifyID, username } = req.body;
+  const account = await Account.findOne({
+    where: {
+      forgot: vertifyID,
+      username
+    },
+    raw: true,
+  });
+  if (account) {
+    res.status(200).json({
+      message: `Mã xác nhận chính xác!`,
+      isSuccess: true
+    });
+  } else {
+    res.status(200).json({
+      message: `Mã xác nhận không chính xác!`,
+      isSuccess: false
+    });
+  }
+};
 
 // const accessForgotPassword = async (req, res, next) => {
 //   const { username } = req.params;

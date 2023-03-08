@@ -264,10 +264,27 @@ const get3ItemsEachType = async (req, res) => {
         const itemsEachType = await Item.sequelize.query(
             "SELECT * FROM (SELECT I.*, T.name AS name_type, (SELECT ROUND(AVG(R.rating) * 2, 0) / 2 FROM reviews AS R WHERE R.id_item = I.id_item) as rating, row_number() over (partition by I.id_type order by I.energy ASC) as type_rank FROM items as I, types as T WHERE I.id_type = T.id_type ORDER BY rating DESC) test WHERE type_rank <= 3", 
         { 
+            replacements: { id_item: id_item},
             type: QueryTypes.SELECT,
             raw: true
         });
         res.status(200).json(itemsEachType)
+    } catch (error) {
+        res.status(500).json(error);
+    }
+}
+
+const getItems = async (req, res) => {
+    const {quantity} = req.body
+    try {
+        const items = await Item.sequelize.query(
+            "SELECT (SELECT SUM(quantity) FROM order_details WHERE id_item = OD.id_item) as sold, I.*, T.name AS name_type, (SELECT ROUND(AVG(R.rating) * 2, 0) / 2 FROM reviews AS R WHERE R.id_item = I.id_item) as rating FROM items as I, order_details as OD, types as T WHERE OD.id_item = I.id_item AND T.id_type = I.id_type AND I.status != 0 ORDER BY sold DESC LIMIT :quantity", 
+        { 
+            replacements: { quantity },
+            type: QueryTypes.SELECT,
+            raw: true
+        });
+        res.status(200).json(items)
     } catch (error) {
         res.status(500).json(error);
     }
@@ -280,4 +297,5 @@ module.exports = {
     createItem,
     updateItem,
     deleteItem,
+    getItems
 };

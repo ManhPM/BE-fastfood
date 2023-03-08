@@ -30,7 +30,7 @@ const get4LastestReviewsByItem = async (req, res) => {
   //console.log(id_item);
   try {
     const reviews = await sequelize.query(
-      "SELECT R.id_item, R.rating, R.comment, DATE_FORMAT(R.datetime, '%d/%m/%Y %H:%i') as datetime, C.name as name_customer FROM reviews as R, customers as C WHERE R.id_customer = C.id_customer AND R.id_item = :id_item ORDER BY datetime DESC LIMIT 4",
+      "SELECT R.id_item, R.rating, R.comment, DATE_FORMAT(R.datetime, '%d/%m/%Y %H:%i') as datetime, C.name as name_customer FROM reviews as R, customers as C WHERE R.id_customer = C.id_customer AND R.id_item = :id_item ORDER BY R.datetime DESC LIMIT 4",
       {
         replacements: { id_item: id_item },
         type: QueryTypes.SELECT,
@@ -49,10 +49,10 @@ const createReviewByItem = async (req, res) => {
   const { id_order } = req.query
   const { rating, comment } = req.body;
   try {
-    // kiem tra xem co < 7 ngay khong
+    // kiem tra xem co <= 7 ngay khong
     // lay id_customer
     const check7day = await sequelize.query(
-      "SELECT O.id_customer, datediff(O.datetime, curdate()) as count FROM orders as O WHERE O.id_order = :id_order",
+      "SELECT O.id_customer, datediff(curdate(), O.datetime) as count FROM orders as O WHERE O.id_order = :id_order",
       {
         replacements: {
           id_order: id_order,
@@ -60,6 +60,7 @@ const createReviewByItem = async (req, res) => {
         type: QueryTypes.SELECT,
       }
     );
+    console.log(check7day)
      if(check7day[0].count <= 7){
       const datetime = new Date();
       datetime.setHours(datetime.getHours() + 7);

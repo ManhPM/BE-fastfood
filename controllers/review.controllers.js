@@ -39,8 +39,6 @@ const get4LastestReviewsByItem = async (req, res) => {
   }
 };
 
-
-
 const createReviewByItem = async (req, res) => {
   const { id_item } = req.params;
   const { id_order } = req.query

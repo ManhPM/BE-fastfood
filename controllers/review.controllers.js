@@ -28,9 +28,8 @@ const getAllReviewByItem = async (req, res) => {
 const get4LastestReviewsByItem = async (req, res) => {
   try {
     const reviews = await sequelize.query(
-      "SELECT R.id_item, R.rating, R.comment, DATE_FORMAT(R.datetime, '%d/%m/%Y %H:%i') as datetime, C.name as name_customer FROM reviews as R, customers as C WHERE R.id_customer = C.id_customer AND R.id_item = :id_item ORDER BY R.datetime DESC LIMIT 4",
+      "SELECT I.name as name_item, R.id_item, R.rating, R.comment, DATE_FORMAT(R.datetime, '%d/%m/%Y %H:%i') as datetime, C.name as name_customer FROM reviews as R, customers as C, items as I WHERE R.id_customer = C.id_customer AND R.id_item = I.id_item ORDER BY R.datetime DESC LIMIT 4",
       {
-        replacements: { id_item: id_item },
         type: QueryTypes.SELECT,
       }
     );

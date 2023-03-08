@@ -21,7 +21,7 @@ const getAllOrder = async (req, res) => {
         }
       );
       const orderList = await Order.sequelize.query(
-        "SELECT O.id_order, O.description, O.status, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, (SELECT COUNT(id_item) FROM order_details WHERE isReviewed = 0 AND id_order = O.id_order) as reviewingCount FROM orders as O WHERE O.id_customer = :id_customer ORDER BY O.id_order DESC, O.status ASC",
+        "SELECT O.id_order, O.description, O.status, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, (SELECT COUNT(id_item) FROM order_details WHERE isReviewed = 0 AND id_order = O.id_order) as reviewingCount, (SELECT SUM(OD.quantity*I.price) FROM order_details as OD, items as I WHERE I.id_item = OD.id_item AND O.id_order = OD.id_order) as total FROM orders as O WHERE O.id_customer = :id_customer ORDER BY O.datetime DESC, O.status ASC",
         {
           replacements: { id_customer: customer[0].id_customer },
           type: QueryTypes.SELECT,
@@ -125,10 +125,10 @@ const cancelOrder = async (req, res) => {
     if(order.status != 2){
       order.status = 2;
       await order.save();
-      res.status(400).json({ message: "Đơn hàng đã được huỷ bỏ!" });
+      res.status(200).json({ message: "Đơn hàng đã được huỷ bỏ!" });
     }
     else {
-      res.status(201).json({ message: "Thao tác thất bại. Đơn hàng đã được huỷ bỏ!" });
+      res.status(400).json({ message: "Thao tác thất bại. Đơn hàng đã được huỷ bỏ!" });
     }
   } catch (error) {
     res.status(500).json({ message: "Thao tác thất bại!" });
@@ -147,7 +147,6 @@ const thongKe = async (req, res) => {
           raw: true,
         }
       );
-
       const info = await Order_detail.sequelize.query(
         "SELECT SUM(OD.quantity*I.price) as total FROM order_details as OD, orders as O, items as I WHERE O.id_order = OD.id_order AND I.id_item = OD.id_item AND O.status = 1 AND I.status != 0 AND O.datetime between :tuNgay AND :denNgay",
         {

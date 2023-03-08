@@ -264,7 +264,6 @@ const get3ItemsEachType = async (req, res) => {
         const itemsEachType = await Item.sequelize.query(
             "SELECT * FROM (SELECT I.*, T.name AS name_type, (SELECT ROUND(AVG(R.rating) * 2, 0) / 2 FROM reviews AS R WHERE R.id_item = I.id_item) as rating, row_number() over (partition by I.id_type order by I.energy ASC) as type_rank FROM items as I, types as T WHERE I.id_type = T.id_type ORDER BY rating DESC) test WHERE type_rank <= 3", 
         { 
-            replacements: { id_item: id_item},
             type: QueryTypes.SELECT,
             raw: true
         });

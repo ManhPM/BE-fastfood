@@ -140,7 +140,7 @@ const thongKe = async (req, res) => {
     if(tuNgay && denNgay){
       // Thống kê từ ngày tuNgay đến ngày denNgay
       const thongKe = await Order_detail.sequelize.query(
-        "SELECT (SELECT SUM(quantity) FROM order_details WHERE id_item = OD.id_item) as sold, (SELECT SUM(quantity*I.price) FROM order_details WHERE id_item = OD.id_item) as total, I.*, T.name AS name_type, (SELECT ROUND(AVG(R.rating) * 2, 0) / 2 FROM reviews AS R WHERE R.id_item = I.id_item) as rating FROM items as I, order_details as OD, types as T, orders as O WHERE OD.id_item = I.id_item AND O.id_order = OD.id_order AND T.id_type = I.id_type AND I.status != 0 AND O.status = 1 AND O.datetime between :tuNgay AND :denNgay ORDER BY sold DESC",
+        "SELECT DISTINCT (SELECT SUM(quantity) FROM order_details WHERE id_item = OD.id_item) as sold, (SELECT SUM(quantity*I.price) FROM order_details WHERE id_item = OD.id_item) as total, I.*, T.name AS name_type, (SELECT ROUND(AVG(R.rating) * 2, 0) / 2 FROM reviews AS R WHERE R.id_item = I.id_item) as rating FROM items as I, order_details as OD, types as T, orders as O WHERE OD.id_item = I.id_item AND O.id_order = OD.id_order AND T.id_type = I.id_type AND I.status != 0 AND O.status = 1 AND O.datetime between :tuNgay AND :denNgay ORDER BY sold DESC",
         {
           replacements: { tuNgay: `${tuNgay}`, denNgay: `${denNgay}` },
           type: QueryTypes.SELECT,
@@ -161,7 +161,7 @@ const thongKe = async (req, res) => {
     else {
       // Thống kê từ trước đến nay
       const thongKe = await Order_detail.sequelize.query(
-        "SELECT (SELECT SUM(quantity) FROM order_details WHERE id_item = OD.id_item) as sold, (SELECT SUM(quantity*I.price) FROM order_details WHERE id_item = OD.id_item) as total, I.*, T.name AS name_type, (SELECT ROUND(AVG(R.rating) * 2, 0) / 2 FROM reviews AS R WHERE R.id_item = I.id_item) as rating FROM items as I, order_details as OD, types as T, orders as O WHERE OD.id_item = I.id_item AND T.id_type = I.id_type AND O.id_order = OD.id_order AND I.status != 0 AND O.status = 1 ORDER BY sold DESC",
+        "SELECT DISTINCT (SELECT SUM(quantity) FROM order_details WHERE id_item = OD.id_item) as sold, (SELECT SUM(quantity*I.price) FROM order_details WHERE id_item = OD.id_item) as total, I.*, T.name AS name_type, (SELECT ROUND(AVG(R.rating) * 2, 0) / 2 FROM reviews AS R WHERE R.id_item = I.id_item) as rating FROM items as I, order_details as OD, types as T, orders as O WHERE OD.id_item = I.id_item AND T.id_type = I.id_type AND O.id_order = OD.id_order AND I.status != 0 AND O.status = 1 ORDER BY sold DESC",
         {
           type: QueryTypes.SELECT,
           raw: true,

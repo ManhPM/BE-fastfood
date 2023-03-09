@@ -81,7 +81,7 @@ const createReviewByItem = async (req, res) => {
       res.status(400).json({ message: "Đánh giá thất bại. Đơn bạn đặt đã vượt quá 7 ngày!" });
      }
   } catch (error) {
-    res.status(500).json({ message: "Đã có lỗi xảy ra!" });
+    res.status(400).json({ message: "Đã có lỗi xảy ra!" });
   }
 
 

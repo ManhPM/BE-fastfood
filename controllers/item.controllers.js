@@ -289,7 +289,7 @@ const getItems = async (req, res) => {
     const {quantity} = req.query
     try {
         const items = await Item.sequelize.query(
-            "SELECT distinct (SELECT SUM(quantity) FROM order_details WHERE id_item = OD.id_item) as sold, I.*, T.name AS name_type, (SELECT ROUND(AVG(R.rating) * 2, 0) / 2 FROM reviews AS R WHERE R.id_item = I.id_item) as rating FROM items as I, order_details as OD, types as T WHERE OD.id_item = I.id_item AND T.id_type = I.id_type AND I.status != 0 ORDER BY sold DESC LIMIT :quantity", 
+            "SELECT DISTINCT (SELECT SUM(quantity) FROM order_details WHERE id_order = O.id_order AND id_item = OD.id_item) as sold, (SELECT SUM(quantity*I.price) FROM order_details WHERE id_order = O.id_order AND id_item = OD.id_item) as total, I.*, T.name AS name_type, (SELECT ROUND(AVG(R.rating) * 2, 0) / 2 FROM reviews AS R WHERE R.id_item = I.id_item) as rating FROM items as I, order_details as OD, types as T, orders as O WHERE OD.id_item = I.id_item AND O.id_order = OD.id_order AND T.id_type = I.id_type AND I.status != 0 GROUP BY I.id_item ORDER BY sold DESC LIMIT :quantity", 
         { 
             replacements: { quantity: Number(quantity) },
             type: QueryTypes.SELECT,

@@ -4,7 +4,6 @@ const {login, logout, createAccountForCustomer, changePassword, forgotPassword, 
 const { checkExistAccount } = require("../middlewares/validates/checkExist");
 const { checkCreateAccount } = require("../middlewares/validates/checkCreate");
 const {authenticate} = require("../middlewares/auth/authenticate.js")
-const {authorize} = require("../middlewares/auth/authorize.js");
 const accountRouter = express.Router();
 
 accountRouter.post("/login", checkExistAccount(Account), login);

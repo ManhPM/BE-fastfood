@@ -312,35 +312,35 @@ const verify = async (req, res, next) => {
 
 const accessForgotPassword = async (req, res, next) => {
   const { username, password, repeatPassword } = req.body;
-  if (password != repeatPassword) {
-    res.status(400).json({
-      message: `Mật khẩu lặp lại không chính xác!`,
-    });
-  } else {
-    const salt = bcrypt.genSaltSync(10);
-    //mã hoá salt + password
-    const hashPassword = bcrypt.hashSync(password, salt);
-    try {
-      const accountUpdate = await Account.findOne({
-        where: {
-          username,
-        },
+    if (password != repeatPassword) {
+      res.status(400).json({
+        message: `Mật khẩu lặp lại không chính xác!`,
       });
-      accountUpdate.password = hashPassword;
-      accountUpdate.forgot = 0;
-      if (accountUpdate.active == 0) {
-        accountUpdate.active = 1;
+    } else {
+      const salt = bcrypt.genSaltSync(10);
+      //mã hoá salt + password
+      const hashPassword = bcrypt.hashSync(password, salt);
+      try {
+        const accountUpdate = await Account.findOne({
+          where: {
+            username,
+          },
+        });
+        accountUpdate.password = hashPassword;
+        accountUpdate.forgot = 0;
+        if (accountUpdate.active == 0) {
+          accountUpdate.active = 1;
+        }
+        await accountUpdate.save();
+        res.status(200).json({
+          message: `Lấy lại mật khẩu thành công!`,
+        });
+      } catch (error) {
+        res.status(500).json({
+          message: `Lấy lại mật khẩu thất bại!`,
+        });
       }
-      await accountUpdate.save();
-      res.status(200).json({
-        message: `Lấy lại mật khẩu thành công!`,
-      });
-    } catch (error) {
-      res.status(500).json({
-        message: `Lấy lại mật khẩu thất bại!`,
-      });
     }
-  }
 };
 
 

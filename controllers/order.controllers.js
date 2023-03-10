@@ -197,7 +197,6 @@ const thongKeSanPham = async (req, res) => {
           raw: true,
         }
       );
-      console.log("nhucc")
       const info = await Order_detail.sequelize.query(
         "SELECT SUM((SELECT SUM(quantity*I.price) FROM order_details WHERE id_order = O.id_order AND id_item = OD.id_item)) as total FROM items as I, order_details as OD, types as T, orders as O WHERE OD.id_item = I.id_item AND O.id_order = OD.id_order AND T.id_type = I.id_type AND I.status != 0 AND O.status = 1 AND O.datetime between :tuNgay AND :denNgay",
         {
@@ -207,7 +206,7 @@ const thongKeSanPham = async (req, res) => {
         }
       );
 
-      res.status(200).json({ thongke: thongKe, total: info[0].total });
+      res.status(200).json({total: info[0].total, itemList: thongKe});
     } else {
       // Thống kê từ trước đến nay
       const thongKe = await Order_detail.sequelize.query(
@@ -224,7 +223,7 @@ const thongKeSanPham = async (req, res) => {
           raw: true,
         }
       );
-      res.status(200).json({ thongke: thongKe, total: info[0].total });
+      res.status(200).json({total: info[0].total, itemList: thongKe});
     }
   } catch (error) {
     res.status(500).json({ message: "Đã có lỗi xảy ra!" });

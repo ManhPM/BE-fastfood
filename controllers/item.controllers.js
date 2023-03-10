@@ -289,7 +289,7 @@ const getItems = async (req, res) => {
     const {quantity} = req.query
     try {
         const items = await Item.sequelize.query(
-            "SELECT DISTINCT (SELECT SUM(quantity) FROM order_details WHERE id_order = O.id_order AND id_item = OD.id_item) as sold, (SELECT SUM(quantity*I.price) FROM order_details WHERE id_order = O.id_order AND id_item = OD.id_item) as total, I.*, T.name AS name_type, (SELECT ROUND(AVG(R.rating) * 2, 0) / 2 FROM reviews AS R WHERE R.id_item = I.id_item) as rating FROM items as I, order_details as OD, types as T, orders as O WHERE OD.id_item = I.id_item AND O.id_order = OD.id_order AND T.id_type = I.id_type AND I.status != 0 GROUP BY I.id_item ORDER BY sold DESC LIMIT :quantity", 
+            "SELECT (SELECT SUM(order_details.quantity) FROM items, order_details, orders where order_details.id_item = I.id_item AND order_details.id_order = orders.id_order AND orders.status = 1 AND order_details.id_item = items.id_item AND items.status != 0) as sold, (SELECT (SUM(order_details.quantity)*items.price) as total FROM items, order_details, orders where order_details.id_item = I.id_item AND order_details.id_order = orders.id_order AND orders.status = 1 AND order_details.id_item = items.id_item AND items.status != 0) as total, I.*, T.name AS name_type, (SELECT ROUND(AVG(R.rating) * 2, 0) / 2 FROM reviews AS R WHERE R.id_item = I.id_item) as rating FROM items as I, order_details as OD, types as T, orders as O WHERE OD.id_item = I.id_item AND O.id_order = OD.id_order AND T.id_type = I.id_type AND I.status != 0 AND O.status = 1 GROUP BY I.id_item ORDER BY sold DESC LIMIT :quantity", 
         { 
             replacements: { quantity: Number(quantity) },
             type: QueryTypes.SELECT,

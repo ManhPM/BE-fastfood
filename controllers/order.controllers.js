@@ -244,7 +244,15 @@ const thongKeDonHang = async (req, res) => {
             raw: true,
           }
         );
-        res.status(200).json({ countOrder: info[0].countOrder, total: info[0].total, countItem: info[0].countItem });
+        const orderList = await Order_detail.sequelize.query(
+          "SELECT O.id_order, O.datetime, O.description, O.status, P.name as name_payment, C.name as name_customer FROM orders as O, customers as C, payments as P WHERE O.datetime BETWEEN :tuNgay AND :denNgay AND O.status = :status AND O.id_payment = P.id_payment AND O.id_customer = C.id_customer",
+          {
+            replacements: { tuNgay: `${tuNgay}`, denNgay: `${denNgay}`, status: status },
+            type: QueryTypes.SELECT,
+            raw: true,
+          }
+        );
+        res.status(200).json({ countOrder: info[0].countOrder, total: info[0].total, countItem: info[0].countItem, orderList });
       }
       else {
         // Thống kê từ ngày tuNgay đến ngày denNgay
@@ -256,7 +264,15 @@ const thongKeDonHang = async (req, res) => {
             raw: true,
           }
         );
-        res.status(200).json(info[0]);
+        const orderList = await Order_detail.sequelize.query(
+          "SELECT O.id_order, O.datetime, O.description, O.status, P.name as name_payment, C.name as name_customer FROM orders as O, customers as C, payments as P WHERE O.datetime BETWEEN :tuNgay AND :denNgay AND O.id_payment = P.id_payment AND O.id_customer = C.id_customer",
+          {
+            replacements: { tuNgay: `${tuNgay}`, denNgay: `${denNgay}` },
+            type: QueryTypes.SELECT,
+            raw: true,
+          }
+        );
+        res.status(200).json({ info: info[0], orderList});
       }
     } else {
       // Thống kê từ trước đến nay
@@ -269,7 +285,15 @@ const thongKeDonHang = async (req, res) => {
             raw: true,
           }
         );
-        res.status(200).json(info[0]);
+        const orderList = await Order_detail.sequelize.query(
+          "SELECT O.id_order, O.datetime, O.description, O.status, P.name as name_payment, C.name as name_customer FROM orders as O, customers as C, payments as P WHERE O.id_payment = P.id_payment AND O.id_customer = C.id_customer AND O.status = 0",
+          {
+            replacements: { status: status },
+            type: QueryTypes.SELECT,
+            raw: true,
+          }
+        );
+        res.status(200).json({ info: info[0], orderList});
       }
       else {
         const info = await Order_detail.sequelize.query(
@@ -279,7 +303,14 @@ const thongKeDonHang = async (req, res) => {
             raw: true,
           }
         );
-        res.status(200).json(info[0]);
+        const orderList = await Order_detail.sequelize.query(
+          "SELECT O.id_order, O.datetime, O.description, O.status, P.name as name_payment, C.name as name_customer FROM orders as O, customers as C, payments as P WHERE O.id_payment = P.id_payment AND O.id_customer = C.id_customer",
+          {
+            type: QueryTypes.SELECT,
+            raw: true,  
+          }
+        );
+        res.status(200).json({ info: info[0], orderList});
       }
     }
   } catch (error) {

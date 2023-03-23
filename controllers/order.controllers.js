@@ -257,7 +257,7 @@ const thongKeDonHang = async (req, res) => {
       else {
         // Thống kê từ ngày tuNgay đến ngày denNgay
         const info = await Order_detail.sequelize.query(
-          "SELECT (SELECT SUM(OD.quantity*I.price) as total FROM order_details as OD, orders as O, items as I WHERE O.id_order = OD.id_order AND I.id_item = OD.id_item AND O.status = 1 AND I.status != 0 AND O.datetime BETWEEN  :tuNgay AND :denNgay) as total, (SELECT COUNT(*) FROM (SELECT COUNT(OD.id_item) FROM order_details as OD, orders as O WHERE O.id_order = OD.id_order AND O.status = 1 AND O.datetime BETWEEN  :tuNgay AND :denNgay GROUP BY OD.id_item) as countItem) as countItem, (SELECT COUNT(O.id_order) FROM orders as O WHERE O.datetime between  :tuNgay AND :denNgay) as countOrder, COUNT(O.id_order) as countConfirmedOrder, (SELECT COUNT(O.id_order) FROM orders as O WHERE O.status = 2 AND O.datetime between  :tuNgay AND :denNgay) AS countCancelOrder, (SELECT COUNT(O.id_order) FROM orders as O WHERE O.status = 0 AND O.datetime between  :tuNgay AND :denNgay) AS countUnConfirmedOrder FROM orders as O WHERE O.status = 1",
+          "SELECT DISTINCT (SELECT SUM(OD.quantity*I.price) as total FROM order_details as OD, orders as O, items as I WHERE O.id_order = OD.id_order AND I.id_item = OD.id_item AND O.status = 1 AND I.status != 0 AND O.datetime BETWEEN  :tuNgay AND :denNgay) as total, (SELECT COUNT(*) FROM (SELECT COUNT(OD.id_item) FROM order_details as OD, orders as O WHERE O.id_order = OD.id_order AND O.status = 1 AND O.datetime BETWEEN  :tuNgay AND :denNgay GROUP BY OD.id_item) as countItem) as countItem, (SELECT COUNT(O.id_order) FROM orders as O WHERE O.datetime between :tuNgay AND :denNgay) as countOrder, (SELECT COUNT(O.id_order) FROM orders as O WHERE O.status = 1 AND O.datetime between  :tuNgay AND :denNgay) as countConfirmedOrder, (SELECT COUNT(O.id_order) FROM orders as O WHERE O.status = 2 AND O.datetime between  :tuNgay AND :denNgay) AS countCancelOrder, (SELECT COUNT(O.id_order) FROM orders as O WHERE O.status = 0 AND O.datetime between  :tuNgay AND :denNgay) AS countUnConfirmedOrder FROM orders as O WHERE O.status = 1",
           {
             replacements: { tuNgay: `${tuNgay}`, denNgay: `${denNgay}` },
             type: QueryTypes.SELECT,
@@ -286,7 +286,7 @@ const thongKeDonHang = async (req, res) => {
           }
         );
         const orderList = await Order_detail.sequelize.query(
-          "SELECT O.id_order, O.datetime, O.description, O.status, P.name as name_payment, C.name as name_customer FROM orders as O, customers as C, payments as P WHERE O.id_payment = P.id_payment AND O.id_customer = C.id_customer AND O.status = 0",
+          "SELECT O.id_order, O.datetime, O.description, O.status, P.name as name_payment, C.name as name_customer FROM orders as O, customers as C, payments as P WHERE O.id_payment = P.id_payment AND O.id_customer = C.id_customer AND O.status = :status",
           {
             replacements: { status: status },
             type: QueryTypes.SELECT,

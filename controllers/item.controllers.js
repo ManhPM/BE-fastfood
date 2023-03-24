@@ -99,7 +99,7 @@ const getAllItem = async (req, res) => {
                 });
                 if(typesort == 1){
                     const itemList = await Item.sequelize.query(
-                        "SELECT I.*, T.name as name_type, (SELECT ROUND(AVG(R.rating) * 2, 0) / 2 FROM reviews AS R WHERE R.id_item = I.id_item) as rating FROM items as I, types as T WHERE T.id_type = I.id_type AND I.status != 0 AND T.id_type = :id_type AND I.name COLLATE UTF8_GENERAL_CI LIKE :name ORDER BY rating DESC LIMIT :from,:perPage", 
+                        "SELECT I.*, T.name as name_type, (SELECT ROUND(AVG(R.rating) * 2, 0) / 2 FROM reviews AS R WHERE R.id_item = I.id_item) as rating FROM items as I, types as T WHERE T.id_type = I.id_type AND I.status != 0 AND T.id_type = :id_type AND I.name COLLATE UTF8_GENERAL_CI LIKE :name ORDER BY rating DESC, I.price ASC LIMIT :from,:perPage", 
                     { 
                         replacements: { name: `%${name}%`, from: (page - 1)*perPage, perPage: perPage, id_type: id_type },
                         type: QueryTypes.SELECT,
@@ -139,7 +139,7 @@ const getAllItem = async (req, res) => {
                 });
                 if(typesort == 1){
                     const itemList = await Item.sequelize.query(
-                        "SELECT I.*, T.name as name_type, (SELECT ROUND(AVG(R.rating) * 2, 0) / 2 FROM reviews AS R WHERE R.id_item = I.id_item) as rating FROM items as I, types as T WHERE T.id_type = I.id_type AND I.status != 0 AND I.name COLLATE UTF8_GENERAL_CI LIKE :name ORDER BY rating DESC LIMIT :from,:perPage", 
+                        "SELECT I.*, T.name as name_type, (SELECT ROUND(AVG(R.rating) * 2, 0) / 2 FROM reviews AS R WHERE R.id_item = I.id_item) as rating FROM items as I, types as T WHERE T.id_type = I.id_type AND I.status != 0 AND I.name COLLATE UTF8_GENERAL_CI LIKE :name ORDER BY rating DESC, I.price ASC LIMIT :from,:perPage", 
                     { 
                         replacements: { name: `%${name}%`, from: (page - 1)*perPage, perPage: perPage },
                         type: QueryTypes.SELECT,
@@ -181,7 +181,7 @@ const getAllItem = async (req, res) => {
                 });
                 if(typesort == 1){
                     const itemList = await Item.sequelize.query(
-                        "SELECT DISTINCT I.*, T.name as name_type, (SELECT ROUND(AVG(R.rating) * 2, 0) / 2 FROM reviews AS R WHERE R.id_item = I.id_item) as rating FROM items as I, types as T, reviews as R WHERE T.id_type = I.id_type AND I.status != 0 AND T.id_type = :id_type ORDER BY rating DESC LIMIT :from,:perPage", 
+                        "SELECT DISTINCT I.*, T.name as name_type, (SELECT ROUND(AVG(R.rating) * 2, 0) / 2 FROM reviews AS R WHERE R.id_item = I.id_item) as rating FROM items as I, types as T, reviews as R WHERE T.id_type = I.id_type AND I.status != 0 AND T.id_type = :id_type ORDER BY rating DESC, I.price ASC LIMIT :from,:perPage", 
                     { 
                         replacements: { id_type: id_type, from: (page - 1)*perPage, perPage: perPage },
                         type: QueryTypes.SELECT,
@@ -220,7 +220,7 @@ const getAllItem = async (req, res) => {
                 });
                 if(typesort == 1){//rating giam dan
                     const itemList = await Item.sequelize.query(
-                        "SELECT I.*, T.name AS name_type, (SELECT ROUND(AVG(R.rating) * 2, 0) / 2 FROM reviews AS R WHERE R.id_item = I.id_item) as rating FROM items as I, types as T WHERE T.id_type = I.id_type AND I.status != 0 ORDER BY rating DESC LIMIT :from,:perPage", 
+                        "SELECT I.*, T.name AS name_type, (SELECT ROUND(AVG(R.rating) * 2, 0) / 2 FROM reviews AS R WHERE R.id_item = I.id_item) as rating FROM items as I, types as T WHERE T.id_type = I.id_type AND I.status != 0 ORDER BY rating DESC, I.price ASC LIMIT :from,:perPage", 
                     { 
                         replacements: { from: (page - 1)*perPage, perPage: perPage },
                         type: QueryTypes.SELECT,

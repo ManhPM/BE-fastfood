@@ -245,7 +245,7 @@ const thongKeDonHang = async (req, res) => {
           }
         );
         const orderList = await Order_detail.sequelize.query(
-          "SELECT O.id_order, O.datetime, O.description, O.status, P.name as name_payment, C.name as name_customer FROM orders as O, customers as C, payments as P WHERE O.datetime BETWEEN :tuNgay AND :denNgay AND O.status = :status AND O.id_payment = P.id_payment AND O.id_customer = C.id_customer",
+          "SELECT O.id_order, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, O.description, O.status, P.name as name_payment, C.name as name_customer FROM orders as O, customers as C, payments as P WHERE O.datetime BETWEEN :tuNgay AND :denNgay AND O.status = :status AND O.id_payment = P.id_payment AND O.id_customer = C.id_customer",
           {
             replacements: { tuNgay: `${tuNgay}`, denNgay: `${denNgay}`, status: status },
             type: QueryTypes.SELECT,
@@ -265,7 +265,7 @@ const thongKeDonHang = async (req, res) => {
           }
         );
         const orderList = await Order_detail.sequelize.query(
-          "SELECT O.id_order, O.datetime, O.description, O.status, P.name as name_payment, C.name as name_customer FROM orders as O, customers as C, payments as P WHERE O.datetime BETWEEN :tuNgay AND :denNgay AND O.id_payment = P.id_payment AND O.id_customer = C.id_customer",
+          "SELECT O.id_order, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, O.description, O.status, P.name as name_payment, C.name as name_customer FROM orders as O, customers as C, payments as P WHERE O.datetime BETWEEN :tuNgay AND :denNgay AND O.id_payment = P.id_payment AND O.id_customer = C.id_customer",
           {
             replacements: { tuNgay: `${tuNgay}`, denNgay: `${denNgay}` },
             type: QueryTypes.SELECT,
@@ -286,7 +286,7 @@ const thongKeDonHang = async (req, res) => {
           }
         );
         const orderList = await Order_detail.sequelize.query(
-          "SELECT O.id_order, O.datetime, O.description, O.status, P.name as name_payment, C.name as name_customer FROM orders as O, customers as C, payments as P WHERE O.id_payment = P.id_payment AND O.id_customer = C.id_customer AND O.status = :status",
+          "SELECT O.id_order, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, O.description, O.status, P.name as name_payment, C.name as name_customer FROM orders as O, customers as C, payments as P WHERE O.id_payment = P.id_payment AND O.id_customer = C.id_customer AND O.status = :status",
           {
             replacements: { status: status },
             type: QueryTypes.SELECT,
@@ -304,7 +304,7 @@ const thongKeDonHang = async (req, res) => {
           }
         );
         const orderList = await Order_detail.sequelize.query(
-          "SELECT O.id_order, O.datetime, O.description, O.status, P.name as name_payment, C.name as name_customer FROM orders as O, customers as C, payments as P WHERE O.id_payment = P.id_payment AND O.id_customer = C.id_customer",
+          "SELECT O.id_order, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, O.description, O.status, P.name as name_payment, C.name as name_customer FROM orders as O, customers as C, payments as P WHERE O.id_payment = P.id_payment AND O.id_customer = C.id_customer",
           {
             type: QueryTypes.SELECT,
             raw: true,  

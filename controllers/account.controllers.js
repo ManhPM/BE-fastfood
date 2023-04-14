@@ -47,12 +47,12 @@ const createAccountForCustomer = async (req, res) => {
         id_customer: newCustomer.id_customer,
       });
       res.status(200).json({
-        message: "Tạo tài khoản thành công!",
+        message: "Đăng ký thành công!",
       });
     }
   } catch (error) {
     res.status(500).json({
-      message: "Thao tác thất bại!",
+      message: "Đăng ký thất bại!",
     });
   }
 };
@@ -87,6 +87,7 @@ const loginAdmin = async (req, res) => {
 
 const login = async (req, res) => {
   const { username, password } = req.body;
+  console.log("username: ",username +" password: ",password);
   const account = await Account.findOne({
     where: {
       username,
@@ -100,7 +101,7 @@ const login = async (req, res) => {
       },
     });
     const token = jwt.sign({ username: account.username }, "manhpham2k1", {
-      expiresIn: 60 * 30,
+      expiresIn: 60 * 60 * 24,
     });
     res
       .status(200)
@@ -108,7 +109,7 @@ const login = async (req, res) => {
         message: "Đăng nhập thành công!",
         token,
         userInfo: customer,
-        expireTime: 60 * 30,
+        expireTime: 60 * 60 * 24,
       });
   } else {
     res.status(400).json({ message: "Sai thông tin đăng nhập!" });

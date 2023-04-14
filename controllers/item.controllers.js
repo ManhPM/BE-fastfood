@@ -259,7 +259,7 @@ const getDetailItem = async (req, res) => {
     const { id_item } = req.params
     try {
         const item = await Item.sequelize.query(
-            "SELECT I.*, T.name as name_type, (SELECT ROUND(AVG(R.rating) * 2, 0) / 2 FROM reviews AS R WHERE R.id_item = :id_item) as rating FROM items AS I, types as T WHERE T.id_type = I.id_type AND I.id_item = :id_item", 
+            "SELECT I.*, T.name as name_type, (SELECT ROUND(AVG(R.rating) * 2, 0) / 2 FROM reviews AS R WHERE R.id_item = 1) as rating, (SELECT COUNT(R.id_item) FROM reviews as R, items as I WHERE R.id_item = I.id_item AND I.id_item = :id_item) as countComment FROM items AS I, types as T WHERE T.id_type = I.id_type AND I.id_item = :id_item", 
         { 
             replacements: { id_item: id_item},
             type: QueryTypes.SELECT,

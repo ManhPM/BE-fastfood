@@ -13,7 +13,7 @@ accountRouter.post("/create", checkCreateAccount(Account), createAccountForCusto
 accountRouter.post("/forgotpassword", checkExistAccount(Account), forgotPassword);
 accountRouter.post("/forgotpassword/verify", checkExistAccount(Account), verify);
 accountRouter.post("/forgotpassword/verify/success", checkExistAccount(Account), accessForgotPassword);
-accountRouter.put("/changepassword", authenticate, checkExistAccount(Account), changePassword);
+accountRouter.put("/changepassword", authenticate, changePassword);
 
 module.exports = {
     accountRouter,

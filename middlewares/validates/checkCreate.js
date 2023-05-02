@@ -14,6 +14,39 @@ const checkCreateAccount = (Model) => {
   };
 };
 
+const checkEmail = (Model) => {
+  return async (req, res, next) => {
+    const { email } = req.body;
+    const account = await Model.findOne({
+      where: {
+        email,
+      },
+    });
+    if(account){
+      res.status(400).json({ message: "Email đã tồn tại!" });
+    }
+    else {
+      next();
+    }
+  };
+};
+const checkPhone = (Model) => {
+  return async (req, res, next) => {
+    const { phone } = req.body;
+    const account = await Model.findOne({
+      where: {
+        phone,
+      },
+    });
+    if(account){
+      res.status(400).json({ message: "Số điện thoại đã tồn tại!" });
+    }
+    else {
+      next();
+    }
+  };
+};
+
 const checkCreateItem = (Model) => {
   return async (req, res, next) => {
     const { name, price, id_type } = req.body;
@@ -74,4 +107,6 @@ module.exports = {
   checkCreateItem,
   checkItemValue,
   checkCreateReview,
+  checkEmail,
+  checkPhone
 };

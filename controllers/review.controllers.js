@@ -13,7 +13,7 @@ const getAllReviewByItem = async (req, res) => {
   //console.log(id_item);
   try {
     const reviews = await sequelize.query(
-      "SELECT Cus.name, Rev.rating , Rev.comment, DATE_FORMAT(Rev.datetime, '%d/%m/%Y %H:%i') as datetime FROM reviews as Rev, customers as Cus  Where id_item= :id_item AND Rev.id_customer = Cus.id_customer ORDER BY datetime DESC",
+      "SELECT Cus.name, Rev.rating , Rev.comment, DATE_FORMAT(Rev.datetime, '%d/%m/%Y %H:%i') as datetime FROM reviews as Rev, customers as Cus  Where id_item= :id_item AND Rev.id_customer = Cus.id_customer ORDER BY Rev.datetime DESC",
       {
         replacements: { id_item: id_item },
         type: QueryTypes.SELECT,

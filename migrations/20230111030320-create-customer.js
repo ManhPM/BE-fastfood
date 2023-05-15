@@ -26,6 +26,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING(100),
       },
+      image: {
+        type: Sequelize.STRING,
+        defaultValue: "http://localhost:3005/static/default.jpg"
+      },
       email: {
         allowNull: false,
         unique: true,

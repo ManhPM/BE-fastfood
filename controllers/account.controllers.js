@@ -345,21 +345,27 @@ const accessForgotPassword = async (req, res, next) => {
 };
 
 
-// const information = async (req, res) => {
-//   const { username } = req;
-//   const infors = await Account.sequelize.query(
-//     "SELECT NV.*, PQ.tenQuyen FROM taikhoans as TK, nhanviens as NV, phanquyens as PQ WHERE TK.maNV = NV.maNV AND NV.maQuyen = PQ.maQuyen AND TK.username = :username",
-//     {
-//       type: QueryTypes.SELECT,
-//       replacements: {
-//         username: username,
-//       },
-//     }
-//   );
-//   res.status(200).json("infor", {
-//     infors: infors[0],
-//   });
-// };
+const updateProfile = async (req, res) => {
+  try {
+    const {name, phone, address} = req.body
+    const account = await Account.findOne({
+      where: {
+        username: req.username
+      }
+    })
+    await Account.sequelize.query(
+      "UPDATE customers SET name = :name, phone = :phone, address = :address WHERE id_account = :id_account",
+      {
+        replacements: { name: `${name}`, phone: `${phone}`, address: `${address}`, id_account: account.id_account},
+        type: QueryTypes.UPDATE,
+        raw: true,
+      }
+    );
+    res.status(200).json({message: "Cập nhật thông tin thành công!"})
+  } catch (error) {
+    res.status(500).json({message: "Cập nhật thông tin thất bại!"})
+  }
+};
 
 module.exports = {
   // getDetailTaiKhoan,
@@ -367,6 +373,7 @@ module.exports = {
   loginAdmin,
   logout,
   createAccountForCustomer,
+  updateProfile,
   // information,
   // create,
   changePassword,

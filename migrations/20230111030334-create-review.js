@@ -3,18 +3,6 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable("Reviews", {
-      // id: {
-      //   allowNull: false,
-      //   autoIncrement: true,
-      //   primaryKey: true,
-      //   type: Sequelize.INTEGER,
-      // },
-      // id_review: {
-      //   allowNull: false,
-      //   autoIncrement: true,
-      //   primaryKey: true,
-      //   type: Sequelize.INTEGER,
-      // },
       id_item: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -30,6 +18,9 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       comment: {
+        type: Sequelize.STRING,
+      },
+      image: {
         type: Sequelize.STRING,
       },
       datetime: {

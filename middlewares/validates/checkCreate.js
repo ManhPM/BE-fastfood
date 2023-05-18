@@ -1,3 +1,7 @@
+const {
+  sequelize,
+} = require("../../models");
+const { QueryTypes } = require("sequelize");
 const checkCreateAccount = (Model) => {
   return async (req, res, next) => {
     const { username } = req.body;
@@ -74,7 +78,22 @@ const checkCreateReview = (Model) => {
       },
     });
     if (order.status == 1) {
-      next();
+      const check7day = await sequelize.query(
+        "SELECT O.id_customer, datediff(curdate(), O.datetime) as count FROM orders as O WHERE O.id_order = :id_order",
+        {
+          replacements: {
+            id_order: id_order,
+          },
+          type: QueryTypes.SELECT,
+        }
+      );
+      if (check7day[0].count <= 7) {
+        next();
+      } else {
+        res
+          .status(400)
+          .json({ message: "Đơn hàng đã vượt quá 7 ngày mua không thể đánh giá!" });
+      }
     } else {
       res
         .status(400)
@@ -108,5 +127,5 @@ module.exports = {
   checkItemValue,
   checkCreateReview,
   checkEmail,
-  checkPhone
+  checkPhone,
 };

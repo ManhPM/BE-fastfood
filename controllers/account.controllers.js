@@ -367,12 +367,17 @@ const updateProfile = async (req, res) => {
   }
 };
 
+const notification = async (req, res) => {
+  res.status(200).json({ message: "Cập nhật ảnh đại diện thành công!" });
+};
+
 module.exports = {
   // getDetailTaiKhoan,
   login,
   loginAdmin,
   logout,
   createAccountForCustomer,
+  notification,
   updateProfile,
   // information,
   // create,

@@ -1,11 +1,11 @@
 const {
   Review,
-  Item,
-  Customer,
   Order_detail,
+  Order,
   sequelize,
 } = require("../models");
 const { QueryTypes } = require("sequelize");
+
 
 // Lấy Review theo sản phẩm
 const getAllReviewByItem = async (req, res) => {
@@ -39,28 +39,28 @@ const get4LastestReviewsByItem = async (req, res) => {
   }
 };
 
-const createReviewByItem = async (req, res) => {
+const notification = async (req, res) => {
   const { id_item } = req.params;
   const { id_order } = req.query
-  const { rating, comment } = req.body;
+  const { rating, comment } = req.body
   try {
-    // kiem tra xem co <= 7 ngay khong
-    // lay id_customer
-    const check7day = await sequelize.query(
-      "SELECT O.id_customer, datediff(curdate(), O.datetime) as count FROM orders as O WHERE O.id_order = :id_order",
-      {
-        replacements: {
-          id_order: id_order,
-        },
-        type: QueryTypes.SELECT,
+    const order_detail = await Order_detail.findOne({
+      where: {
+          id_order,
+          id_item,
       }
-    );
-     if(check7day[0].count <= 7){
+    })
+    if(order_detail.isReviewed == 0){
       const datetime = new Date();
       datetime.setHours(datetime.getHours() + 7);
+      const order = await Order.findOne({
+        where: {
+          id_order
+        }
+      })
       await Review.create({
         id_item,
-        id_customer: check7day[0].id_customer,
+        id_customer: order.id_customer,
         comment,
         datetime: datetime,
         rating,
@@ -76,18 +76,17 @@ const createReviewByItem = async (req, res) => {
         }
       );
       res.status(200).json({ message: "Đánh giá thành công!" });
-     }
-     else {
-      res.status(400).json({ message: "Đánh giá thất bại. Đơn bạn đặt đã vượt quá 7 ngày!" });
-     }
+    }
+    else {
+      res.status(200).json({ message: "Đánh giá thành công!" });
+    }
   } catch (error) {
-    res.status(400).json({ message: "Đã có lỗi xảy ra!" });
+    res.status(500).json({ message: "Đã có lỗi xảy ra!" });
   }
-
-
 };
+
 module.exports = {
   getAllReviewByItem,
-  createReviewByItem,
   get4LastestReviewsByItem,
+  notification
 };

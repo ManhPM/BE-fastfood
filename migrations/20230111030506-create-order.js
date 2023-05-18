@@ -25,6 +25,9 @@ module.exports = {
         type: Sequelize.INTEGER,
         references: { model: "Payments", key: "id_payment" },
       },
+      total: {
+        type: Sequelize.INTEGER,
+      },
       description: {
         type: Sequelize.STRING,
       },

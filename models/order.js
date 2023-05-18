@@ -27,6 +27,9 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
         primaryKey: true,
       },
+      total: {
+        type: DataTypes.INTEGER,
+      },
       datetime: { type: DataTypes.DATE, allowNull: false },
       description: { type: DataTypes.STRING, allowNull: true },
       status: { type: DataTypes.INTEGER, allowNull: false },

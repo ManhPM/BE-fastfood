@@ -1,5 +1,6 @@
 const { Item, Order, Order_detail, Account } = require("../models");
-const { QueryTypes, and } = require("sequelize");
+const { QueryTypes, where } = require("sequelize");
+const { sequelize } = require("../models");
 
 const getAllOrder = async (req, res) => {
   try {
@@ -100,15 +101,13 @@ const getAllItemInOrder = async (req, res) => {
         raw: true,
       }
     );
-    res
-      .status(200)
-      .json({
-        total: info[0].total,
-        datetime: info[0].datetime,
-        status: info[0].status,
-        name_payment: info[0].name_payment,
-        itemList,
-      });
+    res.status(200).json({
+      total: info[0].total,
+      datetime: info[0].datetime,
+      status: info[0].status,
+      name_payment: info[0].name_payment,
+      itemList,
+    });
   } catch (error) {
     res.status(500).json(error);
   }
@@ -143,11 +142,9 @@ const confirmOrder = async (req, res) => {
         } else {
           order.status = 2;
           await order.save();
-          res
-            .status(400)
-            .json({
-              message: "Số lượng hàng còn lại không đủ. Tự động huỷ đơn!",
-            });
+          res.status(400).json({
+            message: "Số lượng hàng còn lại không đủ. Tự động huỷ đơn!",
+          });
         }
       }
       order.status = 1;
@@ -206,7 +203,7 @@ const thongKeSanPham = async (req, res) => {
         }
       );
 
-      res.status(200).json({total: info[0].total, itemList: thongKe});
+      res.status(200).json({ total: info[0].total, itemList: thongKe });
     } else {
       // Thống kê từ trước đến nay
       const thongKe = await Order_detail.sequelize.query(
@@ -223,7 +220,7 @@ const thongKeSanPham = async (req, res) => {
           raw: true,
         }
       );
-      res.status(200).json({total: info[0].total, itemList: thongKe});
+      res.status(200).json({ total: info[0].total, itemList: thongKe });
     }
   } catch (error) {
     res.status(500).json({ message: "Đã có lỗi xảy ra!" });
@@ -239,7 +236,11 @@ const thongKeDonHang = async (req, res) => {
         const info = await Order_detail.sequelize.query(
           "SELECT COUNT(O.id_order) as countOrder, (SELECT SUM(OD.quantity*I.price) as total FROM order_details as OD, orders as O, items as I WHERE O.id_order = OD.id_order AND I.id_item = OD.id_item AND O.status = :status AND I.status != 0 AND O.datetime BETWEEN :tuNgay AND :denNgay) as total FROM orders as O WHERE O.datetime BETWEEN :tuNgay AND :denNgay AND O.status = :status",
           {
-            replacements: { tuNgay: `${tuNgay}`, denNgay: `${denNgay}`, status: status },
+            replacements: {
+              tuNgay: `${tuNgay}`,
+              denNgay: `${denNgay}`,
+              status: status,
+            },
             type: QueryTypes.SELECT,
             raw: true,
           }
@@ -247,14 +248,21 @@ const thongKeDonHang = async (req, res) => {
         const orderList = await Order_detail.sequelize.query(
           "SELECT O.id_order, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, O.description, O.status, P.name as name_payment, C.name as name_customer FROM orders as O, customers as C, payments as P WHERE O.datetime BETWEEN :tuNgay AND :denNgay AND O.status = :status AND O.id_payment = P.id_payment AND O.id_customer = C.id_customer",
           {
-            replacements: { tuNgay: `${tuNgay}`, denNgay: `${denNgay}`, status: status },
+            replacements: {
+              tuNgay: `${tuNgay}`,
+              denNgay: `${denNgay}`,
+              status: status,
+            },
             type: QueryTypes.SELECT,
             raw: true,
           }
         );
-        res.status(200).json({ countOrder: info[0].countOrder, total: info[0].total, orderList });
-      }
-      else {
+        res.status(200).json({
+          countOrder: info[0].countOrder,
+          total: info[0].total,
+          orderList,
+        });
+      } else {
         // Thống kê từ ngày tuNgay đến ngày denNgay
         const info = await Order_detail.sequelize.query(
           "SELECT DISTINCT (SELECT SUM(OD.quantity*I.price) as total FROM order_details as OD, orders as O, items as I WHERE O.id_order = OD.id_order AND I.id_item = OD.id_item AND I.status != 0 AND O.datetime BETWEEN  :tuNgay AND :denNgay) as total, (SELECT COUNT(O.id_order) FROM orders as O WHERE O.datetime between :tuNgay AND :denNgay) as countOrder, (SELECT COUNT(O.id_order) FROM orders as O WHERE O.status = 1 AND O.datetime between  :tuNgay AND :denNgay) as countConfirmedOrder, (SELECT COUNT(O.id_order) FROM orders as O WHERE O.status = 2 AND O.datetime between  :tuNgay AND :denNgay) AS countCancelOrder, (SELECT COUNT(O.id_order) FROM orders as O WHERE O.status = 0 AND O.datetime between  :tuNgay AND :denNgay) AS countUnConfirmedOrder FROM orders as O",
@@ -272,11 +280,11 @@ const thongKeDonHang = async (req, res) => {
             raw: true,
           }
         );
-        res.status(200).json({ info: info[0], orderList});
+        res.status(200).json({ info: info[0], orderList });
       }
     } else {
       // Thống kê từ trước đến nay
-      if(status){
+      if (status) {
         const info = await Order_detail.sequelize.query(
           "SELECT COUNT(O.id_order) as countOrder, (SELECT SUM(OD.quantity*I.price) as total FROM order_details as OD, orders as O, items as I WHERE O.id_order = OD.id_order AND I.id_item = OD.id_item AND O.status = :status AND I.status != 0) as total, (SELECT COUNT(*) FROM (SELECT COUNT(OD.id_item) FROM order_details as OD, orders as O WHERE O.id_order = OD.id_order AND O.status = :status GROUP BY OD.id_item) as countItem) as countItem FROM orders as O WHERE O.datetime AND O.status = :status",
           {
@@ -293,9 +301,8 @@ const thongKeDonHang = async (req, res) => {
             raw: true,
           }
         );
-        res.status(200).json({ info: info[0], orderList});
-      }
-      else {
+        res.status(200).json({ info: info[0], orderList });
+      } else {
         const info = await Order_detail.sequelize.query(
           "SELECT (SELECT SUM(OD.quantity*I.price) as total FROM order_details as OD, orders as O, items as I WHERE O.id_order = OD.id_order AND I.id_item = OD.id_item AND I.status != 0) as total, (SELECT COUNT(O.id_order) FROM orders as O) as countOrder, COUNT(O.id_order) as countConfirmedOrder, (SELECT COUNT(O.id_order) FROM orders as O WHERE O.status = 2) AS countCancelOrder, (SELECT COUNT(O.id_order) FROM orders as O WHERE O.status = 0) AS countUnConfirmedOrder FROM orders as O WHERE O.status = 1",
           {
@@ -307,10 +314,10 @@ const thongKeDonHang = async (req, res) => {
           "SELECT O.id_order, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, O.description, O.status, P.name as name_payment, C.name as name_customer FROM orders as O, customers as C, payments as P WHERE O.id_payment = P.id_payment AND O.id_customer = C.id_customer",
           {
             type: QueryTypes.SELECT,
-            raw: true,  
+            raw: true,
           }
         );
-        res.status(200).json({ info: info[0], orderList});
+        res.status(200).json({ info: info[0], orderList });
       }
     }
   } catch (error) {
@@ -320,27 +327,29 @@ const thongKeDonHang = async (req, res) => {
 
 const chart = async (req, res) => {
   try {
-        var date = new Date();
-        date.setHours(date.getHours() + 7);
-        const account = await Account.findOne({
-          where: {
-            username: req.username
-          }
-        })
-        const orderList = await Order_detail.sequelize.query(
-          "SELECT O.id_order, C.name as name_customer, O.status, O.description, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, P.name as name_payment FROM orders as O, payments as P, customers as C WHERE O.id_payment = P.id_payment AND O.id_customer = C.id_customer AND ceil(day(O.datetime)/7) = :week AND month(O.datetime) = :month AND year(O.datetime) = :year AND C.id_account = :id_account AND O.status = 1",
-          {
-            replacements: { week: Math.ceil(date.getDate()/7), month: date.getMonth()+1, year: date.getFullYear(), id_account: account.id_account },
-            type: QueryTypes.SELECT,
-            raw: true,
-          }
-        );
-        res.status(200).json({ orderList });
+    const orderList = await Order.findAll({
+      where: sequelize.where(sequelize.literal("WEEK(datetime)"), "=", "3"),
+      attributes: ['total','datetime'],
+      include:[
+        {
+          model: Order_detail,
+          required: false,
+          attributes: ['quantity'],
+          include: [
+            {
+              model: Item,
+              required: false,
+              attributes: ['id_type']
+            }
+          ]
+      },
+      ]
+    });
+    res.status(200).json({ orderList });
   } catch (error) {
     res.status(500).json({ message: "Đã có lỗi xảy ra!" });
   }
 };
-
 
 module.exports = {
   getAllOrder,
@@ -349,5 +358,5 @@ module.exports = {
   cancelOrder,
   thongKeSanPham,
   thongKeDonHang,
-  chart
+  chart,
 };

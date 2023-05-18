@@ -1,4 +1,4 @@
-const { Item, Order, Order_detail } = require("../models");
+const { Item, Order, Order_detail, Account } = require("../models");
 const { QueryTypes, and } = require("sequelize");
 
 const getAllOrder = async (req, res) => {
@@ -318,6 +318,30 @@ const thongKeDonHang = async (req, res) => {
   }
 };
 
+const chart = async (req, res) => {
+  try {
+        var date = new Date();
+        date.setHours(date.getHours() + 7);
+        const account = await Account.findOne({
+          where: {
+            username: req.username
+          }
+        })
+        const orderList = await Order_detail.sequelize.query(
+          "SELECT O.id_order, C.name as name_customer, O.status, O.description, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, P.name as name_payment FROM orders as O, payments as P, customers as C WHERE O.id_payment = P.id_payment AND O.id_customer = C.id_customer AND ceil(day(O.datetime)/7) = :week AND month(O.datetime) = :month AND year(O.datetime) = :year AND C.id_account = :id_account AND O.status = 1",
+          {
+            replacements: { week: Math.ceil(date.getDate()/7), month: date.getMonth()+1, year: date.getFullYear(), id_account: account.id_account },
+            type: QueryTypes.SELECT,
+            raw: true,
+          }
+        );
+        res.status(200).json({ orderList });
+  } catch (error) {
+    res.status(500).json({ message: "Đã có lỗi xảy ra!" });
+  }
+};
+
+
 module.exports = {
   getAllOrder,
   getAllItemInOrder,
@@ -325,4 +349,5 @@ module.exports = {
   cancelOrder,
   thongKeSanPham,
   thongKeDonHang,
+  chart
 };

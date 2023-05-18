@@ -280,6 +280,14 @@ const checkout = async (req, res) => {
         id_cart: info[0].id_cart,
       },
     });
+    const total = await Cart.sequelize.query(
+      "SELECT SUM(cart_details.quantity*items.price) as total FROM cart_details, items, carts WHERE cart_details.id_cart = carts.id_cart AND cart_details.id_item = items.id_item AND carts.id_cart = :id_cart",
+      {
+        replacements: { id_cart: info[0].id_cart },
+        type: QueryTypes.SELECT,
+        raw: true,
+      }
+    ); 
     if (itemInCartList.length) {
       const date = new Date();
       date.setHours(date.getHours() + 7);
@@ -288,6 +296,7 @@ const checkout = async (req, res) => {
         id_payment,
         datetime: date,
         id_customer: info[0].id_customer,
+        total: total[0].total,
         status: 0,
       });
       let i = 0;

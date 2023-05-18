@@ -234,7 +234,7 @@ const thongKeDonHang = async (req, res) => {
       if (status) {
         // Thống kê từ ngày tuNgay đến ngày denNgay với status
         const info = await Order_detail.sequelize.query(
-          "SELECT COUNT(O.id_order) as countOrder, (SELECT SUM(OD.quantity*I.price) as total FROM order_details as OD, orders as O, items as I WHERE O.id_order = OD.id_order AND I.id_item = OD.id_item AND O.status = :status AND I.status != 0 AND O.datetime BETWEEN :tuNgay AND :denNgay) as total FROM orders as O WHERE O.datetime BETWEEN :tuNgay AND :denNgay AND O.status = :status",
+          "SELECT COUNT(O.id_order) as countOrder, (SELECT SUM(O.total) FROM orders as O WHERE O.datetime BETWEEN :tuNgay AND :denNgay AND O.status = :status) as total FROM orders as O WHERE O.datetime BETWEEN :tuNgay AND :denNgay AND O.status = :status",
           {
             replacements: {
               tuNgay: `${tuNgay}`,
@@ -246,7 +246,7 @@ const thongKeDonHang = async (req, res) => {
           }
         );
         const orderList = await Order_detail.sequelize.query(
-          "SELECT O.id_order, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, O.description, O.status, P.name as name_payment, C.name as name_customer FROM orders as O, customers as C, payments as P WHERE O.datetime BETWEEN :tuNgay AND :denNgay AND O.status = :status AND O.id_payment = P.id_payment AND O.id_customer = C.id_customer",
+          "SELECT O.id_order, O.total, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, O.description, O.status, P.name as name_payment, C.name as name_customer FROM orders as O, customers as C, payments as P WHERE O.datetime BETWEEN :tuNgay AND :denNgay AND O.status = :status AND O.id_payment = P.id_payment AND O.id_customer = C.id_customer",
           {
             replacements: {
               tuNgay: `${tuNgay}`,
@@ -264,8 +264,9 @@ const thongKeDonHang = async (req, res) => {
         });
       } else {
         // Thống kê từ ngày tuNgay đến ngày denNgay
+        //done
         const info = await Order_detail.sequelize.query(
-          "SELECT DISTINCT (SELECT SUM(OD.quantity*I.price) as total FROM order_details as OD, orders as O, items as I WHERE O.id_order = OD.id_order AND I.id_item = OD.id_item AND I.status != 0 AND O.datetime BETWEEN  :tuNgay AND :denNgay) as total, (SELECT COUNT(O.id_order) FROM orders as O WHERE O.datetime between :tuNgay AND :denNgay) as countOrder, (SELECT COUNT(O.id_order) FROM orders as O WHERE O.status = 1 AND O.datetime between  :tuNgay AND :denNgay) as countConfirmedOrder, (SELECT COUNT(O.id_order) FROM orders as O WHERE O.status = 2 AND O.datetime between  :tuNgay AND :denNgay) AS countCancelOrder, (SELECT COUNT(O.id_order) FROM orders as O WHERE O.status = 0 AND O.datetime between  :tuNgay AND :denNgay) AS countUnConfirmedOrder FROM orders as O",
+          "SELECT distinct (SELECT SUM(O.total) FROM orders as O WHERE O.datetime between :tuNgay AND :denNgay) as total, (SELECT COUNT(O.id_order) FROM orders as O WHERE O.datetime between :tuNgay AND :denNgay) as countOrder, (SELECT COUNT(O.id_order) FROM orders as O WHERE O.status = 1 AND O.datetime between  :tuNgay AND :denNgay) as countConfirmedOrder, (SELECT COUNT(O.id_order) FROM orders as O WHERE O.status = 2 AND O.datetime between  :tuNgay AND :denNgay) AS countCancelOrder, (SELECT COUNT(O.id_order) FROM orders as O WHERE O.status = 0 AND O.datetime between :tuNgay AND :denNgay) AS countUnConfirmedOrder FROM orders as O",
           {
             replacements: { tuNgay: `${tuNgay}`, denNgay: `${denNgay}` },
             type: QueryTypes.SELECT,
@@ -273,7 +274,7 @@ const thongKeDonHang = async (req, res) => {
           }
         );
         const orderList = await Order_detail.sequelize.query(
-          "SELECT O.id_order, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, O.description, O.status, P.name as name_payment, C.name as name_customer FROM orders as O, customers as C, payments as P WHERE O.datetime BETWEEN :tuNgay AND :denNgay AND O.id_payment = P.id_payment AND O.id_customer = C.id_customer",
+          "SELECT O.id_order, O.total, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, O.description, O.status, P.name as name_payment, C.name as name_customer FROM orders as O, customers as C, payments as P WHERE O.datetime BETWEEN :tuNgay AND :denNgay AND O.id_payment = P.id_payment AND O.id_customer = C.id_customer",
           {
             replacements: { tuNgay: `${tuNgay}`, denNgay: `${denNgay}` },
             type: QueryTypes.SELECT,
@@ -285,8 +286,9 @@ const thongKeDonHang = async (req, res) => {
     } else {
       // Thống kê từ trước đến nay
       if (status) {
+        //done
         const info = await Order_detail.sequelize.query(
-          "SELECT COUNT(O.id_order) as countOrder, (SELECT SUM(OD.quantity*I.price) as total FROM order_details as OD, orders as O, items as I WHERE O.id_order = OD.id_order AND I.id_item = OD.id_item AND O.status = :status AND I.status != 0) as total, (SELECT COUNT(*) FROM (SELECT COUNT(OD.id_item) FROM order_details as OD, orders as O WHERE O.id_order = OD.id_order AND O.status = :status GROUP BY OD.id_item) as countItem) as countItem FROM orders as O WHERE O.datetime AND O.status = :status",
+          "SELECT COUNT(O.id_order) as countOrder, (SELECT SUM(O.total) FROM orders as O WHERE O.status = :status) as total FROM orders as O WHERE O.status = :status",
           {
             replacements: { status: status },
             type: QueryTypes.SELECT,
@@ -294,7 +296,7 @@ const thongKeDonHang = async (req, res) => {
           }
         );
         const orderList = await Order_detail.sequelize.query(
-          "SELECT O.id_order, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, O.description, O.status, P.name as name_payment, C.name as name_customer FROM orders as O, customers as C, payments as P WHERE O.id_payment = P.id_payment AND O.id_customer = C.id_customer AND O.status = :status",
+          "SELECT O.id_order, O.total, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, O.description, O.status, P.name as name_payment, C.name as name_customer FROM orders as O, customers as C, payments as P WHERE O.id_payment = P.id_payment AND O.id_customer = C.id_customer AND O.status = :status",
           {
             replacements: { status: status },
             type: QueryTypes.SELECT,
@@ -304,14 +306,14 @@ const thongKeDonHang = async (req, res) => {
         res.status(200).json({ info: info[0], orderList });
       } else {
         const info = await Order_detail.sequelize.query(
-          "SELECT (SELECT SUM(OD.quantity*I.price) as total FROM order_details as OD, orders as O, items as I WHERE O.id_order = OD.id_order AND I.id_item = OD.id_item AND I.status != 0) as total, (SELECT COUNT(O.id_order) FROM orders as O) as countOrder, COUNT(O.id_order) as countConfirmedOrder, (SELECT COUNT(O.id_order) FROM orders as O WHERE O.status = 2) AS countCancelOrder, (SELECT COUNT(O.id_order) FROM orders as O WHERE O.status = 0) AS countUnConfirmedOrder FROM orders as O WHERE O.status = 1",
+          "SELECT (SELECT SUM(O.total) FROM orders AS O) as total, (SELECT COUNT(O.id_order) FROM orders as O) as countOrder, COUNT(O.id_order) as countConfirmedOrder, (SELECT COUNT(O.id_order) FROM orders as O WHERE O.status = 2) AS countCancelOrder, (SELECT COUNT(O.id_order) FROM orders as O WHERE O.status = 0) AS countUnConfirmedOrder FROM orders as O WHERE O.status = 1",
           {
             type: QueryTypes.SELECT,
             raw: true,
           }
         );
         const orderList = await Order_detail.sequelize.query(
-          "SELECT O.id_order, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, O.description, O.status, P.name as name_payment, C.name as name_customer FROM orders as O, customers as C, payments as P WHERE O.id_payment = P.id_payment AND O.id_customer = C.id_customer",
+          "SELECT O.id_order, O.total, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, O.description, O.status, P.name as name_payment, C.name as name_customer FROM orders as O, customers as C, payments as P WHERE O.id_payment = P.id_payment AND O.id_customer = C.id_customer",
           {
             type: QueryTypes.SELECT,
             raw: true,

@@ -328,9 +328,18 @@ const thongKeDonHang = async (req, res) => {
 };
 
 const chart = async (req, res) => {
+  const date = new Date();
+  const week = Math.ceil(date.getDate()/7)
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+
   try {
     const orderList = await Order.findAll({
-      where: sequelize.where(sequelize.literal("WEEK(datetime)"), "=", "3"),
+      where: [
+        sequelize.where(sequelize.literal("ceil(day(datetime)/7)"), "=", `${week}`),
+        sequelize.where(sequelize.literal("MONTH(datetime)"), "=", `${month}`),
+        sequelize.where(sequelize.literal("YEAR(datetime)"), "=", `${year}`),
+      ],
       attributes: ['total','datetime'],
       include:[
         {

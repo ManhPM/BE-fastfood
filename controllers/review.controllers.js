@@ -39,18 +39,11 @@ const get4LastestReviewsByItem = async (req, res) => {
   }
 };
 
-const notification = async (req, res) => {
+const createReview = async (req, res) => {
   const { id_item } = req.params;
   const { id_order } = req.query
-  const { rating, comment } = req.body
+  const { rating, comment, image } = req.body
   try {
-    const order_detail = await Order_detail.findOne({
-      where: {
-          id_order,
-          id_item,
-      }
-    })
-    if(order_detail.isReviewed == 0){
       const datetime = new Date();
       datetime.setHours(datetime.getHours() + 7);
       const order = await Order.findOne({
@@ -58,28 +51,47 @@ const notification = async (req, res) => {
           id_order
         }
       })
-      await Review.create({
-        id_item,
-        id_customer: order.id_customer,
-        comment,
-        datetime: datetime,
-        rating,
-      });
-      await Order_detail.update(
-        { isReviewed: 1 },
-        {
-          where: {
-            isReviewed: 0,
-            id_order,
-            id_item,
-          },
-        }
-      );
-      res.status(200).json({ message: "Đánh giá thành công!" });
-    }
-    else {
-      res.status(200).json({ message: "Đánh giá thành công!" });
-    }
+      if(image){
+        await Review.create({
+          id_item,
+          id_customer: order.id_customer,
+          comment,
+          datetime: datetime,
+          rating,
+          image,
+        });
+        await Order_detail.update(
+          { isReviewed: 1 },
+          {
+            where: {
+              isReviewed: 0,
+              id_order,
+              id_item,
+            },
+          }
+        );
+        res.status(200).json({ message: "Đánh giá thành công!" });
+      }
+      else {
+        await Review.create({
+          id_item,
+          id_customer: order.id_customer,
+          comment,
+          datetime: datetime,
+          rating,
+        });
+        await Order_detail.update(
+          { isReviewed: 1 },
+          {
+            where: {
+              isReviewed: 0,
+              id_order,
+              id_item,
+            },
+          }
+        );
+        res.status(200).json({ message: "Đánh giá thành công!" });
+      }
   } catch (error) {
     res.status(500).json({ message: "Đã có lỗi xảy ra!" });
   }
@@ -88,5 +100,5 @@ const notification = async (req, res) => {
 module.exports = {
   getAllReviewByItem,
   get4LastestReviewsByItem,
-  notification
+  createReview,
 };

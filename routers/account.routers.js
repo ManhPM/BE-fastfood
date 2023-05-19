@@ -10,7 +10,7 @@ const accountRouter = express.Router();
 accountRouter.post("/login", checkExistAccount(Account), login);
 accountRouter.post("/admin/login", checkExistAccount(Account), loginAdmin);
 accountRouter.get("/logout", authenticate, logout);
-accountRouter.post("/avatar", authenticate, uploadAvatar.single('avatar'), notification);
+accountRouter.post("/avatar", authenticate, notification);
 accountRouter.put("/updateprofile", authenticate, updateProfile);
 accountRouter.post("/create", checkCreateAccount(Account), checkEmail(Customer), checkPhone(Customer), createAccountForCustomer);
 accountRouter.post("/forgotpassword", checkExistAccount(Account), forgotPassword);

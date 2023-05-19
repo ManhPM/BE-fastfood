@@ -5,15 +5,14 @@ const { authenticate } = require("../middlewares/auth/authenticate.js");
 const reviewRouter = express.Router();
 const {
   getAllReviewByItem,
-  createReviewByItem,
   get4LastestReviewsByItem,
-  notification,
+  createReview,
 } = require("../controllers/review.controllers");
 const { checkCreateReview } = require("../middlewares/validates/checkCreate.js");
 
 reviewRouter.get("/:id_item", getAllReviewByItem); //*
 reviewRouter.get("/detail/get", get4LastestReviewsByItem); //*
-reviewRouter.post("/:id_item", authenticate, checkCreateReview(Order), uploadReview.single('image'), notification); //*
+reviewRouter.post("/:id_item", authenticate, checkCreateReview(Order), createReview); //*
 
 module.exports = {
   reviewRouter,

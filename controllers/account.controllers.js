@@ -367,8 +367,29 @@ const updateProfile = async (req, res) => {
   }
 };
 
-const notification = async (req, res) => {
-  res.status(200).json({ message: "Cập nhật ảnh đại diện thành công!" });
+const uploadAvatar = async (req, res) => {
+  const {image} = req.body
+  try {
+    const account = await Account.findOne({
+      where: {
+        username: req.username
+      }
+    })
+    await sequelize.query(
+      "UPDATE customers SET image = :image WHERE id_account = :id_account",
+      {
+        replacements: {
+          id_account: account.id_account,
+          image: image,
+        },
+        type: QueryTypes.UPDATE,
+        raw: true,
+      }
+    );
+    res.status(200).json({message: "Cập nhật ảnh đại diện thành công!"})
+  } catch (error) {
+    res.status(500).json({message: "Đã có lỗi xảy ra!"})
+  }
 };
 
 module.exports = {
@@ -377,7 +398,7 @@ module.exports = {
   loginAdmin,
   logout,
   createAccountForCustomer,
-  notification,
+  uploadAvatar,
   updateProfile,
   // information,
   // create,

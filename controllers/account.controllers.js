@@ -1,4 +1,4 @@
-const { Account, Staff, Customer, Role, Wishlist, Cart } = require("../models");
+const { Account, Customer, Wishlist, Cart } = require("../models");
 const { QueryTypes } = require("sequelize");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
@@ -375,17 +375,13 @@ const uploadAvatar = async (req, res) => {
         username: req.username
       }
     })
-    await sequelize.query(
-      "UPDATE customers SET image = :image WHERE id_account = :id_account",
-      {
-        replacements: {
-          id_account: account.id_account,
-          image: image,
-        },
-        type: QueryTypes.UPDATE,
-        raw: true,
+    const update = await Customer.findOne({
+      where: {
+        id_account: account.id_account
       }
-    );
+    })
+    update.image = image
+    await update.save();
     res.status(200).json({message: "Cập nhật ảnh đại diện thành công!"})
   } catch (error) {
     res.status(500).json({message: "Đã có lỗi xảy ra!"})

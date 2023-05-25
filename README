@@ -1,4 +1,12 @@
-Chạy 3 lệnh sau:
+## CREATE DATABASE WITH UTF-8
+
+## MIGRATE DATABASE
 npx sequelize db:migrate:undo:all
 npx sequelize db:migrate
 npx sequelize db:seed:all
+
+## SETUP
+npm i
+
+## RUN APP
+npm start

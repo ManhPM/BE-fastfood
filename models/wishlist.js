@@ -33,6 +33,7 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: "Wishlist",
       timestamps: false,
+      underscored: true,
     }
   );
   return Wishlist;

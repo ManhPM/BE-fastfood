@@ -278,48 +278,6 @@ const getAllItem = async (req, res) => {
     }
 }
 
-const getAllItem1 = async (req, res) => {
-  const { id_type } = req.query;
-  try {
-    if (id_type) {
-      const count = await Item.sequelize.query(
-        "SELECT COUNT(I.id_item) as totalPage FROM items as I, types as T WHERE T.id_type = I.id_type AND I.status != 0 AND T.id_type = :id_type",
-        {
-          replacements: { id_type: id_type },
-          type: QueryTypes.SELECT,
-          raw: true,
-        }
-      );
-      const itemList = await Item.sequelize.query(
-        "SELECT DISTINCT I.*, T.name as name_type, (SELECT ROUND(AVG(R.rating) * 2, 0) / 2 FROM reviews AS R WHERE R.id_item = I.id_item) as rating FROM items as I, types as T, reviews as R WHERE T.id_type = I.id_type AND I.status != 0 AND T.id_type = :id_type ORDER BY I.price ASC",
-        {
-          replacements: { id_type: id_type },
-          type: QueryTypes.SELECT,
-          raw: true,
-        }
-      );
-      res.status(200).json({ totalItems: count[0].totalPage, itemList });
-    } else {
-      const count = await Item.sequelize.query(
-        "SELECT COUNT(I.id_item) AS totalPage FROM items as I, types as T WHERE T.id_type = I.id_type AND I.status != 0",
-        {
-          type: QueryTypes.SELECT,
-          raw: true,
-        }
-      );
-      const itemList = await Item.sequelize.query(
-        "SELECT I.*, T.name AS name_type, (SELECT ROUND(AVG(R.rating) * 2, 0) / 2 FROM reviews AS R WHERE R.id_item = I.id_item) as rating FROM items as I, types as T WHERE T.id_type = I.id_type AND I.status != 0 ORDER BY I.price ASC",
-        {
-          type: QueryTypes.SELECT,
-          raw: true,
-        }
-      );
-      res.status(200).json({ totalItems: count[0].totalPage, itemList });
-    }
-  } catch (error) {
-    res.status(500).json(error);
-  }
-};
 
 const getDetailItem = async (req, res) => {
   const { id_item } = req.params;

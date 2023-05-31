@@ -87,7 +87,6 @@ const loginAdmin = async (req, res) => {
 
 const login = async (req, res) => {
   const { username, password } = req.body;
-  console.log("username: ",username +" password: ",password);
   const account = await Account.findOne({
     where: {
       username,

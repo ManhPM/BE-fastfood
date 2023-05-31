@@ -6,10 +6,10 @@ const { rootRouter } = require("./routers");
 const cookieParser = require("cookie-parser");
 const { authenticate } = require("./middlewares/auth/authenticate");
 const path = require("path");
-const port = 3005;
 const app = express();
 const cors = require("cors");
 const multer = require("multer");
+require('dotenv').config()
 
 app.use(cookieParser());
 app.use(cors());
@@ -28,8 +28,8 @@ app.use(
 app.use(rootRouter);
 
 //lắng nghe sự kiện kết nối
-app.listen(port, async () => {
-  console.log(`App listening on http://localhost:${port}`);
+app.listen(process.env.PORT, async () => {
+  console.log(`App listening on http://localhost:${process.env.PORT}`);
   try {
     await sequelize.authenticate();
     console.log("Kết nối thành công!.");

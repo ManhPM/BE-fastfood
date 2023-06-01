@@ -29,10 +29,6 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      isActive: {
-        type: Sequelize.STRING(1),
-        defaultValue: 0,
-      },
       forgot: {
         type: Sequelize.INTEGER,
         defaultValue: 0,

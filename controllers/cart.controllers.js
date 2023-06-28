@@ -266,62 +266,73 @@ const deleteOneItemInCart = async (req, res) => {
 
 const checkout = async (req, res) => {
   const { id_payment, description } = req.body;
-  try {
-    const info = await Cart.sequelize.query(
-      "SELECT C.* FROM carts as C, customers as CU, accounts as A WHERE A.username = :username AND CU.id_account = A.id_account AND CU.id_customer = C.id_customer",
-      {
-        replacements: { username: `${req.username}` },
-        type: QueryTypes.SELECT,
-        raw: true,
-      }
-    );
-    const itemInCartList = await Cart_detail.findAll({
-      where: {
-        id_cart: info[0].id_cart,
-      },
-    });
-    const total = await Cart.sequelize.query(
-      "SELECT SUM(cart_details.quantity*items.price) as total FROM cart_details, items, carts WHERE cart_details.id_cart = carts.id_cart AND cart_details.id_item = items.id_item AND carts.id_cart = :id_cart",
-      {
-        replacements: { id_cart: info[0].id_cart },
-        type: QueryTypes.SELECT,
-        raw: true,
-      }
-    ); 
-    if (itemInCartList.length) {
-      const date = new Date();
-      date.setHours(date.getHours() + 7);
-      const newOrder = await Order.create({
-        description,
-        id_payment,
-        datetime: date,
-        id_customer: info[0].id_customer,
-        total: total[0].total,
-        status: 0,
+    try {
+      const info = await Cart.sequelize.query(
+        "SELECT C.* FROM carts as C, customers as CU, accounts as A WHERE A.username = :username AND CU.id_account = A.id_account AND CU.id_customer = C.id_customer",
+        {
+          replacements: { username: `${req.username}` },
+          type: QueryTypes.SELECT,
+          raw: true,
+        }
+      );
+      const itemInCartList = await Cart_detail.findAll({
+        where: {
+          id_cart: info[0].id_cart,
+        },
       });
-      let i = 0;
-      while (itemInCartList[i]) {
-        await Order_detail.create({
-          id_order: newOrder.id_order,
-          id_item: itemInCartList[i].id_item,
-          quantity: itemInCartList[i].quantity,
-          isReviewed: 0,
+      const total = await Cart.sequelize.query(
+        "SELECT SUM(cart_details.quantity*items.price) as total FROM cart_details, items, carts WHERE cart_details.id_cart = carts.id_cart AND cart_details.id_item = items.id_item AND carts.id_cart = :id_cart",
+        {
+          replacements: { id_cart: info[0].id_cart },
+          type: QueryTypes.SELECT,
+          raw: true,
+        }
+      );
+      if (itemInCartList.length) {
+        const date = new Date();
+        date.setHours(date.getHours() + 7);
+        const newOrder = await Order.create({
+          description,
+          id_payment,
+          datetime: date,
+          id_customer: info[0].id_customer,
+          total: total[0].total,
+          status: 0,
         });
-        await Cart_detail.destroy({
-          where: {
-            id_item: itemInCartList[i].id_item,
-            id_cart: itemInCartList[i].id_cart,
-          },
-        });
-        i++;
+        let i = 0;
+        while (itemInCartList[i]) {
+          await Cart.sequelize.query(
+            "INSERT INTO `order_details` VALUES (:id_order,:id_item,:quantity,0)",
+            {
+              replacements: { 
+                id_order: newOrder.id_order,
+                id_item: itemInCartList[i].id_item,
+                quantity: itemInCartList[i].quantity 
+              },
+              type: QueryTypes.INSERT,
+              raw: true,
+            }
+          );
+          await Cart.sequelize.query(
+            "DELETE FROM cart_details WHERE id_item = :id_item AND id_cart = :id_cart",
+            {
+              replacements: { 
+                id_item: itemInCartList[i].id_item,
+                id_cart: itemInCartList[i].id_cart,
+              },
+              type: QueryTypes.DELETE,
+              raw: true,
+            }
+          );
+          i++;
+        }
+        res.status(201).json({ message: "Đặt hàng thành công!" });
+      } else {
+        res.status(400).json({ message: "Giỏ hàng của bạn đang trống!" });
       }
-      res.status(201).json({ message: "Đặt hàng thành công!" });
-    } else {
-      res.status(400).json({ message: "Giỏ hàng của bạn đang trống!" });
+    } catch (error) {
+      res.status(500).json({ message: "Server Error!" });
     }
-  } catch (error) {
-    res.status(500).json({ message: "Đặt hàng thất bại!" });
-  }
 };
 
 module.exports = {

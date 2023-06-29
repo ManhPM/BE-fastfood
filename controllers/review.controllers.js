@@ -61,10 +61,10 @@ const createReview = async (req, res) => {
           image,
         });
         await Order_detail.update(
-          { isReviewed: 1 },
+          { reviewed: 1 },
           {
             where: {
-              isReviewed: 0,
+              reviewed: 0,
               id_order,
               id_item,
             },
@@ -81,10 +81,10 @@ const createReview = async (req, res) => {
           rating,
         });
         await Order_detail.update(
-          { isReviewed: 1 },
+          { reviewed: 1 },
           {
             where: {
-              isReviewed: 0,
+              reviewed: 0,
               id_order,
               id_item,
             },

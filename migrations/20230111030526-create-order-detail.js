@@ -29,7 +29,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER,
       },
-      isReviewed: {
+      reviewed: {
         allowNull: false,
         type: Sequelize.INTEGER,
         defaultValue: 0,

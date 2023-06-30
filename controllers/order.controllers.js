@@ -11,7 +11,7 @@ const getAllOrder = async (req, res) => {
         type: QueryTypes.SELECT,
         raw: true,
       }
-    );isRev
+    );
     if (info[0].id_role == 1) {
       const customer = await Order.sequelize.query(
         "SELECT C.* FROM carts as C, customers as CU, accounts as A WHERE A.username = :username AND CU.id_account = A.id_account AND CU.id_customer = C.id_customer",

@@ -11,7 +11,7 @@ const getAllOrder = async (req, res) => {
         type: QueryTypes.SELECT,
         raw: true,
       }
-    );
+    );isRev
     if (info[0].id_role == 1) {
       const customer = await Order.sequelize.query(
         "SELECT C.* FROM carts as C, customers as CU, accounts as A WHERE A.username = :username AND CU.id_account = A.id_account AND CU.id_customer = C.id_customer",
@@ -22,7 +22,7 @@ const getAllOrder = async (req, res) => {
         }
       );
       const orderList = await Order.sequelize.query(
-        "SELECT O.id_order, O.description, O.status, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, (SELECT COUNT(id_item) FROM order_details WHERE isReviewed = 0 AND id_order = O.id_order) as reviewingCount, (SELECT SUM(OD.quantity*I.price) FROM order_details as OD, items as I WHERE I.id_item = OD.id_item AND O.id_order = OD.id_order) as total FROM orders as O WHERE O.id_customer = :id_customer ORDER BY O.datetime DESC, O.status ASC",
+        "SELECT O.id_order, O.description, O.status, DATE_FORMAT(O.datetime, '%d/%m/%Y %H:%i') as datetime, (SELECT COUNT(id_item) FROM order_details WHERE reviewed = 0 AND id_order = O.id_order) as reviewingCount, (SELECT SUM(OD.quantity*I.price) FROM order_details as OD, items as I WHERE I.id_item = OD.id_item AND O.id_order = OD.id_order) as total FROM orders as O WHERE O.id_customer = :id_customer ORDER BY O.datetime DESC, O.status ASC",
         {
           replacements: { id_customer: customer[0].id_customer },
           type: QueryTypes.SELECT,
